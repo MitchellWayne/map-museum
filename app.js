@@ -8,6 +8,8 @@ const sassMiddleware = require('node-sass-middleware');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
+require('dotenv').config();
+
 // MongoDB Setup
 const mongoose = require('mongoose');
 mongoose.connect(
@@ -20,7 +22,7 @@ mongoose.connect(
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-const app = express();
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -38,6 +40,7 @@ app.use(sassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// routing
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
