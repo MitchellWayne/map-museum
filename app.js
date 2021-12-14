@@ -6,6 +6,7 @@ const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 
 const indexRouter = require('./routes/index');
+const noteRouter = require('./routes/noteRouter');
 
 require('dotenv').config();
 
@@ -41,7 +42,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // routing
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/note', noteRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
