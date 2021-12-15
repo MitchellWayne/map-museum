@@ -3,7 +3,13 @@ const router = express.Router();
 
 const noteController = require('../controllers/noteController.js');
 
-// Get note listing
+// Get note listing by series (or all if params left empty)
+// This should probably only return some data (Like just IDs + Title + Coords / etc.)
 router.get('/', noteController.notelist_get);
+
+router.post('/', noteController.note_post);
+router.get('/:postID', noteController.note_get);
+router.put('/:postID', noteController.note_put);
+router.delete('/:postID', noteController.note_delete);
 
 module.exports = router;
