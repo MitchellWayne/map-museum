@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// TODO
-// ADD SERIES MODEL
-// SERIES DOCUMENTS CONTAINS LIST OF NOTES
-// ADD SERIES TO NOTE SCHEMA
-
 let noteSchema = new Schema({
   series: {Type: Schema.Types.ObjectId, ref: 'Series', required: true},
   title: {type: String, required: true},
