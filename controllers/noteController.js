@@ -22,6 +22,7 @@ exports.note_get = function(req, res) {
   Note.findById(req.params.noteID)
   .exec(function(err, note){
     if(err) return res.status(400).json(err);
+    else if(!note) return res.status(404).json({err: `note with id ${req.params.noteID} not found`});
     else return res.status(200).json(note);
   });
 };
