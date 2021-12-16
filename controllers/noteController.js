@@ -17,9 +17,13 @@ exports.notelist_get = function(req, res) {
   });
 };
 
-// Return full note from _id
+// Return full note from _id (URL Path)
 exports.note_get = function(req, res) {
-
+  Note.findById(req.params.noteID)
+  .exec(function(err, note){
+    if(err) return res.status(400).json(err);
+    else return res.status(200).json(note);
+  });
 };
 
 // Create a new note
