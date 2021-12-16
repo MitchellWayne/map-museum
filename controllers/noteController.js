@@ -1,8 +1,20 @@
 const Note = require('../models/note');
 
+// Hints
+// - Query params for specifying optional filters for data to return
+// - URL paths for returning data with strict rules / no optional filters
+// - Body params for interacting with CUD operations
+
 // Return a list of notes with limited info
 exports.notelist_get = function(req, res) {
-  return res.status(404);
+  // TODO
+  // Enable filter by req.query
+  Note.find()
+  .select('series title longitude latitude')
+  .exec(function(err, notelist){
+    if(err) return res.status(400).json(err);
+    else return res.status(200).json(notelist);
+  });
 };
 
 // Return full note from _id
@@ -11,6 +23,7 @@ exports.note_get = function(req, res) {
 };
 
 // Create a new note
+// Should also return a URI to that new note
 exports.note_post = function(req, res) {
 
 };
