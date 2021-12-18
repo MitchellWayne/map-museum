@@ -7,12 +7,16 @@ const Note = require('../models/note');
 
 // Return a list of notes with limited info
 exports.notelist_get = function(req, res) {
-  // TODO
-  // Enable filter by req.query
+  const { seriesfilter } = req.query;
+
   Note.find()
   .select('series title longitude latitude')
   .exec(function(err, notelist){
     if(err) return res.status(400).json(err);
+    else if (seriesfilter) { 
+      // Add logic for returning notes by series 
+      return;
+    }
     else return res.status(200).json(notelist);
   });
 };
