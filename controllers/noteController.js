@@ -1,3 +1,5 @@
+const { body, validationResult } = require('express-validator');
+
 const Note = require('../models/note');
 
 // Hints
