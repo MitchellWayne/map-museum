@@ -7,8 +7,7 @@ let noteSchema = new Schema({
   location: {type: String, required: true},
   synposis: {type: String, required: true},
   locdetails: {type: String, required: true},
-  longitude: {type: Double, required: true},
-  latitude: {type: Double, required: true},
+  latlong: {type: String, required: true},
   image: {type: String, required: true},
 });
 
