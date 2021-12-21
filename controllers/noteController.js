@@ -14,8 +14,8 @@ exports.notelist_get = function(req, res) {
   .exec(function(err, notelist){
     if(err) return res.status(400).json(err);
     else if (seriesfilter) { 
-      // Add logic for returning notes by series 
-      return;
+      notelist = notelist.filter(x => (x.series.toLowerCase()).includes(seriesfilter));
+      return res.status(200).json(notelist);
     }
     else return res.status(200).json(notelist);
   });
