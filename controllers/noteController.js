@@ -35,9 +35,16 @@ exports.note_get = function(req, res) {
 
 // Create a new note
 // Should also return a URI to that new note
-exports.note_post = function(req, res) {
+exports.note_post = [
+  body('title', 'Title field must not be empty.').trim().isLength({min: 1}).escape(),
+  body('location', 'Location field must not be empty.').trim().isLength({min: 1}).escape(),
+  body('synposis', 'Synopsis field must not be empty.').trim().isLength({min: 1}).escape(),
+  body('locdetails', 'Location details field must not be empty.').trim().isLength({min: 1}).escape(),
 
-};
+  (req, res) => {
+   return;
+  }
+];
 
 // Update an existing note by _id
 exports.note_put = function(req, res) {
