@@ -1,6 +1,7 @@
 const { body, validationResult } = require('express-validator');
 
 const Note = require('../models/note');
+const Series = require('../models/series');
 
 // Hints
 // - Query params for specifying optional filters for data to return
@@ -36,6 +37,10 @@ exports.note_get = function(req, res) {
 // Create a new note
 // Should also return a URI to that new note
 exports.note_post = [
+  body('series').custom(seriesID => {
+    // Check if a valid series ID has been passed
+    const seriesQuery = await Series.find({_id: seriesID}).lean().exec();
+  }),
   body('title', 'Title field must not be empty.').trim().isLength({min: 1}).escape(),
   body('location', 'Location field must not be empty.').trim().isLength({min: 1}).escape(),
   body('synposis', 'Synopsis field must not be empty.').trim().isLength({min: 1}).escape(),
