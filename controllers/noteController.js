@@ -46,8 +46,8 @@ exports.note_post = [
   body('location', 'Location field must not be empty.').trim().isLength({min: 1}).escape(),
   body('synposis', 'Synopsis field must not be empty.').trim().isLength({min: 1}).escape(),
   body('locdetails', 'Location details field must not be empty.').trim().isLength({min: 1}).escape(),
-  body('latlong', 'Invalid longitide / latitude coordinates.').isLatLong().trim(),
-  bodu('image', 'Invalid image url.').isURL().trim(),
+  body('latlong', 'Invalid longitide / latitude coordinates.').trim().isLatLong(),
+  bodu('image', 'Invalid image url.').trim().isURL(),
 
   (req, res) => {
     const errors = validationResult(req);
