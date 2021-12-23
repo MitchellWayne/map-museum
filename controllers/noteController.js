@@ -62,6 +62,10 @@ exports.note_post = [
       latlong: req.body.latlong,
       image: req.body.image,
     })
+    .save((saveError, note) => {
+      if (saveError) return res.status(400).json(saveError);
+      return res.status(201).json({message: "Successfully created note", uri: `${req.host}/note/${note._id}`});
+    });
   
   }
 ];
