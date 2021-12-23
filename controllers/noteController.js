@@ -47,9 +47,21 @@ exports.note_post = [
   body('synposis', 'Synopsis field must not be empty.').trim().isLength({min: 1}).escape(),
   body('locdetails', 'Location details field must not be empty.').trim().isLength({min: 1}).escape(),
   body('latlong', 'Invalid longitide / latitude coordinates.').isLatLong().trim(),
+  
 
   (req, res) => {
-   return;
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) return res.status(400).json(errors);
+
+    const note = new Note({
+      series: req.body.series,
+      title: req.body.title,
+      location: req.body.location,
+      synopsis: req.body.synopsis,
+      locdetails: req.body.locdetails,
+      latlong: req.body.latlong,
+    })
+  
   }
 ];
 
