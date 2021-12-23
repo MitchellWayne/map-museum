@@ -60,6 +60,7 @@ exports.note_post = [
       synopsis: req.body.synopsis,
       locdetails: req.body.locdetails,
       latlong: req.body.latlong,
+      image: req.body.image,
     })
   
   }
