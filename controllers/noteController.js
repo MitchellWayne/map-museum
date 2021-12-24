@@ -67,13 +67,43 @@ exports.note_post = [
       return res.status(201).json({message: "Successfully created note", uri: `${req.host}/note/${note._id}`});
     });
   }
-  
+
 ];
 
 // Update an existing note by _id
-exports.note_put = function(req, res) {
+exports.note_put = [
+  body('series').custom(seriesID => {
+    const seriesExists = await Series.exists({_id: seriesID});
+    if (seriesExists) return true;
+    else return Promise.reject(`Series with ID ${seriesID} does not exist.`);
+  }),
+  body('title', 'Title field must not be empty.').trim().isLength({min: 1}).escape(),
+  body('location', 'Location field must not be empty.').trim().isLength({min: 1}).escape(),
+  body('synposis', 'Synopsis field must not be empty.').trim().isLength({min: 1}).escape(),
+  body('locdetails', 'Location details field must not be empty.').trim().isLength({min: 1}).escape(),
+  body('latlong', 'Invalid longitide / latitude coordinates.').trim().isLatLong(),
+  bodu('image', 'Invalid image url.').trim().isURL(),
 
-};
+  (req, res) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) return res.status(400).json(errors);
+
+    const note = {
+      series: req.body.series,
+      title: req.body.title,
+      location: req.body.location,
+      synopsis: req.body.synopsis,
+      locdetails: req.body.locdetails,
+      latlong: req.body.latlong,
+      image: req.body.image,
+    }
+
+    Note.findByIdAndUpdate(req.params.nodeID, post, function(updateError, updatedNote){
+      if (updateError) return res.status(400).json(updateErr);
+      return res.status(200).json({message: "Successfully updated note.", uri: `${req.host}/note/${note._id}`});
+    });
+  }
+];
 
 // Delete an existing note by _id
 exports.note_delete = function(req, res) {
