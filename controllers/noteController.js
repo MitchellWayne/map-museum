@@ -66,8 +66,8 @@ exports.note_post = [
       if (saveError) return res.status(400).json(saveError);
       return res.status(201).json({message: "Successfully created note", uri: `${req.host}/note/${note._id}`});
     });
-  
   }
+  
 ];
 
 // Update an existing note by _id
