@@ -99,7 +99,7 @@ exports.note_put = [
     }
 
     Note.findByIdAndUpdate(req.params.nodeID, post, function(updateError, updatedNote){
-      if (updateError) return res.status(400).json(updateErr);
+      if (updateError) return res.status(400).json(updateError);
       return res.status(200).json({message: "Successfully updated note.", uri: `${req.host}/note/${note._id}`});
     });
   }
