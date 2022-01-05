@@ -106,6 +106,8 @@ exports.note_put = [
 ];
 
 // Delete an existing note by _id
+// Future:
+//  This will also have to delete the associated image in our AWS S3 storage solution
 exports.note_delete = function(req, res) {
   Note.findByIdAndDelete(req.params.noteID, function(delError){
     if (delError) return res.status(400).json(delError);
