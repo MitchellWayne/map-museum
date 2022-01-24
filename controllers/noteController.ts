@@ -1,3 +1,5 @@
+export {};
+
 const { body, validationResult } = require('express-validator');
 
 const Note = require('../models/note');
@@ -12,6 +14,7 @@ const Series = require('../models/series');
 exports.notelist_get = function(req, res) {
   const { seriesfilter } = req.query;
 
+  Series.find();
   Note.find()
   .select('series title longitude latitude')
   .exec(function(err, notelist){
