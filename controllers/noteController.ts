@@ -12,15 +12,14 @@ const Series = require('../models/series');
 
 // Return a list of notes with limited info
 exports.notelist_get = function(req, res) {
-  const { seriesfilter } = req.query;
+  const { seriesFilterID } = req.query;
 
-  Series.find();
   Note.find()
   .select('series title longitude latitude')
   .exec(function(err, notelist){
     if(err) return res.status(400).json(err);
-    else if (seriesfilter) { 
-      notelist = notelist.filter(x => (x.series.toLowerCase()).includes(seriesfilter));
+    else if (seriesFilterID) { 
+      notelist = notelist.filter(x => x.series === seriesFilterID);
       return res.status(200).json(notelist);
     }
     else return res.status(200).json(notelist);
