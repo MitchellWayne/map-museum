@@ -19,7 +19,7 @@ exports.notelist_get = function(req, res) {
   .exec(function(err, notelist){
     if(err) return res.status(400).json(err);
     else if (seriesFilterID) { 
-      notelist = notelist.filter(x => x.series === seriesFilterID);
+      notelist = notelist.filter(note => note.series === seriesFilterID);
       return res.status(200).json(notelist);
     }
     else return res.status(200).json(notelist);
