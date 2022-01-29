@@ -1,8 +1,10 @@
+export {}
+
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let noteSchema = new Schema({
-  series: {Type: Schema.Types.ObjectId, ref: 'Series', required: true},
+  series: {type: Schema.Types.ObjectId, ref: 'Series', required: true},
   title: {type: String, required: true},
   location: {type: String, required: true},
   synposis: {type: String, required: true},
