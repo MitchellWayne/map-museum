@@ -1,9 +1,9 @@
 export {};
 
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
-const noteController = require('../controllers/noteController.js');
+import * as noteController from '../controllers/noteController.js';
 
 // Get note listing by series (or all if params left empty)
 // This should probably only return some data (Like just IDs + Title + Coords / etc.)

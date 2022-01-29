@@ -1,9 +1,9 @@
 export {};
 
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
-const seriesController = require('../controllers/seriesController.js');
+import * as seriesController from '../controllers/seriesController.js';
 
 router.get('/', seriesController.serieslist_get);
 
