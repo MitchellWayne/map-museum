@@ -27,4 +27,4 @@ const router = express_1.default.Router();
 const seriesController = __importStar(require("../controllers/seriesController.js"));
 router.get('/', seriesController.serieslist_get);
 router.post('/', seriesController.series_post);
-module.exports = router;
+exports.default = { router };

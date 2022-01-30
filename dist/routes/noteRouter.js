@@ -23,13 +23,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const validator = require('../validators');
 const router = express_1.default.Router();
 const noteController = __importStar(require("../controllers/noteController.js"));
-// Get note listing by series (or all if params left empty)
-// This should probably only return some data (Like just IDs + Title + Coords / etc.)
 router.get('/', noteController.notelist_get);
-router.post('/', noteController.note_post);
 router.get('/:noteID', noteController.note_get);
-router.put('/:noteID', noteController.note_put);
+router.post('/', validator.checkPost, noteController.note_post);
+router.put('/:noteID', validator.checkPost, noteController.note_put);
 router.delete('/:noteID', noteController.note_delete);
-module.exports = router;
+exports.default = { router };

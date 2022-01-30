@@ -9,4 +9,4 @@ const seriesSchema = new Schema({
     name: { type: String, required: true },
     notes: [{ type: Schema.Types.ObjectId, ref: 'Note', required: true }],
 });
-module.exports = mongoose_1.default.model('Series', seriesSchema);
+exports.default = mongoose_1.default.model('Series', seriesSchema);

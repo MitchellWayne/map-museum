@@ -3,8 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.series_post = exports.serieslist_get = void 0;
 const series_1 = __importDefault(require("../models/series"));
-exports.serieslist_get = function (req, res) {
+function serieslist_get(req, res) {
     const seriesfilter = req.query;
     series_1.default.find()
         .select('name notes')
@@ -18,5 +19,9 @@ exports.serieslist_get = function (req, res) {
         else
             return res.status(200).json(serieslist);
     });
-};
-exports.series_post = function (req, res) { };
+}
+exports.serieslist_get = serieslist_get;
+function series_post(req, res) {
+    return res.status(404).json(req.body);
+}
+exports.series_post = series_post;
