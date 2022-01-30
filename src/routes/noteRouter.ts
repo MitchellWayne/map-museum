@@ -1,4 +1,5 @@
 import express from 'express';
+const validator = require('../validators');
 const router = express.Router();
 
 import * as noteController from '../controllers/noteController.js';
@@ -7,9 +8,9 @@ import * as noteController from '../controllers/noteController.js';
 // This should probably only return some data (Like just IDs + Title + Coords / etc.)
 router.get('/', noteController.notelist_get);
 
-router.post('/', noteController.note_post);
 router.get('/:noteID', noteController.note_get);
-router.put('/:noteID', noteController.note_put);
+router.post('/', validator.checkPost, noteController.note_post);
+router.put('/:noteID', validator.checkPost, noteController.note_put);
 router.delete('/:noteID', noteController.note_delete);
 
 export default { router };

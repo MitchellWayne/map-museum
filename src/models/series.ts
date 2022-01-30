@@ -1,5 +1,3 @@
-export {};
-
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
@@ -8,4 +6,5 @@ const seriesSchema = new Schema({
   notes: [{ type: Schema.Types.ObjectId, ref: 'Note', required: true }],
 });
 
-module.exports = mongoose.model('Series', seriesSchema);
+// module.exports = mongoose.model('Series', seriesSchema);
+export default mongoose.model('Series', seriesSchema);

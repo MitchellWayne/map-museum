@@ -1,5 +1,3 @@
-export {};
-
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
@@ -13,4 +11,5 @@ const noteSchema = new Schema({
   image: { type: String, required: true }, // this should be an img url for now, until you figure out image storage
 });
 
-module.exports = mongoose.model('Note', noteSchema);
+// module.exports = mongoose.model('Note', noteSchema);
+export default mongoose.model('Note', noteSchema);
