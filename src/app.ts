@@ -11,11 +11,12 @@ import seriesRouter from './routes/seriesRouter';
 require('dotenv').config();
 
 // MongoDB Setup
-import mongoose from 'mongoose';
-mongoose.connect(process.env.DB_CRED, {
+import mongoose, { ConnectOptions } from 'mongoose';
+const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
+};
+mongoose.connect(process.env.DB_CRED as string, options as ConnectOptions);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
