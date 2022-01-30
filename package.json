@@ -22,7 +22,10 @@
     "pug": "^3.0.2"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.13",
+    "@types/http-errors": "^1.8.2",
+    "@types/morgan": "^1.9.3",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
     "eslint": "^8.8.0",

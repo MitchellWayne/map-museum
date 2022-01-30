@@ -1,5 +1,3 @@
-export {};
-
 import express from 'express';
 const router = express.Router();
 
@@ -14,4 +12,4 @@ router.get('/:noteID', noteController.note_get);
 router.put('/:noteID', noteController.note_put);
 router.delete('/:noteID', noteController.note_delete);
 
-module.exports = router;
+export default { router };

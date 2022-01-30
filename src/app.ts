@@ -1,28 +1,25 @@
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+import createError from 'http-errors';
+import express from 'express';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
 
-const indexRouter = require('./routes/index');
-const noteRouter = require('./routes/noteRouter');
-const seriesRouter = require('./routes/seriesRouter');
+import indexRouter from './routes/index';
+import noteRouter from './routes/noteRouter';
+import seriesRouter from './routes/seriesRouter';
 
 require('dotenv').config();
 
 // MongoDB Setup
-const mongoose = require('mongoose');
-mongoose.connect(
-  process.env.DB_CRED,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }
-);
-let db = mongoose.connection;
+import mongoose from 'mongoose';
+mongoose.connect(process.env.DB_CRED, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-let app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -37,14 +34,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 // routing
 app.use('/', indexRouter);
 app.use('/note', noteRouter);
+app.use('/series', seriesRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
