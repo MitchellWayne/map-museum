@@ -4,9 +4,9 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const indexRouter = require('./src/routes/index');
-const noteRouter = require('./src/routes/noteRouter');
-const seriesRouter = require('./src/routes/seriesRouter');
+const indexRouter = require('./routes/index');
+const noteRouter = require('./routes/noteRouter');
+const seriesRouter = require('./routes/seriesRouter');
 require('dotenv').config();
 // MongoDB Setup
 const mongoose = require('mongoose');
