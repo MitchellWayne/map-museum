@@ -1,10 +1,7 @@
 import * as express from 'express';
 import Series from '../models/series';
 
-exports.serieslist_get = function (
-  req: express.Request,
-  res: express.Response
-) {
+export function serieslist_get(req: express.Request, res: express.Response) {
   const seriesfilter = req.query;
 
   Series.find()
@@ -18,8 +15,8 @@ exports.serieslist_get = function (
         return res.status(200).json(serieslist);
       } else return res.status(200).json(serieslist);
     });
-};
+}
 
-exports.series_post = function (req: express.Request, res: express.Response) {
+export function series_post(req: express.Request, res: express.Response) {
   return res.status(404).json(req.body);
-};
+}
