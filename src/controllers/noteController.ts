@@ -41,7 +41,7 @@ export function note_get(req: express.Request, res: express.Response) {
 // Create a new note
 // Should also return a URI to that new note
 export async function note_post(req: express.Request, res: express.Response) {
-  const errors = validationResult(req);
+  const errors = validationResult(req.body);
   let s3result = null;
   if (!errors.isEmpty()) return res.status(400).json(errors);
 

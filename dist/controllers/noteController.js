@@ -47,7 +47,7 @@ function note_get(req, res) {
 exports.note_get = note_get;
 function note_post(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const errors = (0, express_validator_1.validationResult)(req);
+        const errors = (0, express_validator_1.validationResult)(req.body);
         let s3result = null;
         if (!errors.isEmpty())
             return res.status(400).json(errors);
