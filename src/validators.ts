@@ -16,7 +16,7 @@ exports.checkPost = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  body('synposis', 'Synopsis field must not be empty.')
+  body('synoposis', 'Synopsis field must not be empty.')
     .trim()
     .isLength({ min: 1 })
     .escape(),
