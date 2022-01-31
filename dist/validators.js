@@ -41,5 +41,4 @@ exports.checkPost = [
     (0, check_1.check)('latlong', 'Invalid longitide / latitude coordinates.')
         .trim()
         .isLatLong(),
-    (0, check_1.check)('image', 'Invalid image url.').trim().isURL(),
 ];

@@ -23,12 +23,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const multer_1 = __importDefault(require("multer"));
+const storage = multer_1.default.memoryStorage();
+const upload = (0, multer_1.default)({ storage: storage });
 const validator = require('../validators');
 const router = express_1.default.Router();
 const noteController = __importStar(require("../controllers/noteController.js"));
 router.get('/', noteController.notelist_get);
 router.get('/:noteID', noteController.note_get);
-router.post('/', validator.checkPost, noteController.note_post);
-router.put('/:noteID', validator.checkPost, noteController.note_put);
+router.post('/', validator.checkPost, upload.single('imgfile'), noteController.note_post);
+router.put('/:noteID', validator.checkPost, upload.single('imgfile'), noteController.note_put);
 router.delete('/:noteID', noteController.note_delete);
 exports.default = { router };
