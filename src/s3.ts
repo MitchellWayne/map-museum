@@ -1,6 +1,6 @@
 require('dotenv').config();
 import fs from 'fs';
-import S3, { PutObjectRequest } from 'aws-sdk/clients/s3';
+import S3, { DeleteObjectRequest, PutObjectRequest } from 'aws-sdk/clients/s3';
 
 const bucketName = process.env.AWS_BUCKET_NAME;
 const region = process.env.AWS_BUCKET_REGION;
@@ -23,4 +23,13 @@ export function uploadFile(file: Express.Multer.File) {
   };
 
   return s3.upload(uploadParams).promise();
+}
+
+export function deleteFile(fileKey: string) {
+  const deleteParams: DeleteObjectRequest = {
+    Bucket: bucketName as string,
+    Key: fileKey,
+  };
+
+  return s3.deleteObject(deleteParams).promise();
 }
