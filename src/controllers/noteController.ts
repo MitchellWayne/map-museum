@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { validationResult } from 'express-validator';
 
 import Note from '../models/note';
+import { uploadFile, deleteFile, getFileStream } from '../s3';
 // import Series from '../models/series';
 
 // Hints
@@ -39,9 +40,14 @@ export function note_get(req: express.Request, res: express.Response) {
 
 // Create a new note
 // Should also return a URI to that new note
-export function note_post(req: express.Request, res: express.Response) {
+export async function note_post(req: express.Request, res: express.Response) {
   const errors = validationResult(req);
+  let s3result = null;
   if (!errors.isEmpty()) return res.status(400).json(errors);
+
+  if (req.file) {
+    s3result = await uploadFile(req.file);
+  }
 
   new Note({
     series: req.body.series,
@@ -50,7 +56,7 @@ export function note_post(req: express.Request, res: express.Response) {
     synopsis: req.body.synopsis,
     locdetails: req.body.locdetails,
     latlong: req.body.latlong,
-    image: req.body.image,
+    image: s3result ? s3result.Key : null,
   }).save((saveError: mongoose.Document, note: mongoose.Document) => {
     if (saveError) return res.status(400).json(saveError);
     return res.status(201).json({
