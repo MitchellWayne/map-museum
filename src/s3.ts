@@ -1,5 +1,6 @@
 require('dotenv').config();
 import fs from 'fs';
+import streamifier from 'streamifier';
 import S3, {
   DeleteObjectRequest,
   GetObjectRequest,
@@ -18,7 +19,9 @@ const s3 = new S3({
 });
 
 export function uploadFile(file: Express.Multer.File) {
-  const fileStream = fs.createReadStream(file.path);
+  const fileStream = streamifier
+    .createReadStream(file.buffer)
+    .pipe(process.stdout);
 
   const uploadParams: PutObjectRequest = {
     Bucket: bucketName as string,
