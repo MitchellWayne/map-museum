@@ -1,6 +1,10 @@
 require('dotenv').config();
 import fs from 'fs';
-import S3, { DeleteObjectRequest, PutObjectRequest } from 'aws-sdk/clients/s3';
+import S3, {
+  DeleteObjectRequest,
+  GetObjectRequest,
+  PutObjectRequest,
+} from 'aws-sdk/clients/s3';
 
 const bucketName = process.env.AWS_BUCKET_NAME;
 const region = process.env.AWS_BUCKET_REGION;
@@ -32,4 +36,13 @@ export function deleteFile(fileKey: string) {
   };
 
   return s3.deleteObject(deleteParams).promise();
+}
+
+export function getFileStream(fileKey: string) {
+  const getParams: GetObjectRequest = {
+    Bucket: bucketName as string,
+    Key: fileKey,
+  };
+
+  return s3.getObject(getParams).createReadStream();
 }
