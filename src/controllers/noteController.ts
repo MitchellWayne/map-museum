@@ -6,6 +6,8 @@ import Note from '../models/note';
 import { uploadFile, deleteFile, getFileStream } from '../s3';
 // import Series from '../models/series';
 
+import { NoteInterface } from '../types';
+
 // Hints
 // - Query params for specifying optional filters for data to return
 // - URL paths for returning data with strict rules / no optional filters
@@ -58,7 +60,7 @@ export async function note_post(req: express.Request, res: express.Response) {
       locdetails: req.body.locdetails,
       latlong: req.body.latlong,
       image: s3result ? s3result.Key : null,
-    }).save((saveError: mongoose.Document, note: mongoose.Document) => {
+    }).save((saveError: mongoose.Document, note: NoteInterface) => {
       if (saveError) return res.status(400).json({ saveError });
       return res.status(201).json({
         message: 'Successfully created note',
@@ -86,11 +88,11 @@ export function note_put(req: express.Request, res: express.Response) {
   Note.findByIdAndUpdate(
     req.params.nodeID,
     note,
-    function (updateError: mongoose.Document, updatedNote: mongoose.Document) {
+    function (updateError: mongoose.Document, updatedNote: NoteInterface) {
       if (updateError) return res.status(400).json(updateError);
       return res.status(200).json({
         message: 'Successfully updated note.',
-        uri: `${req.host}/note/${updatedNote._id}`,
+        uri: `${req.hostname}/note/${updatedNote._id}`,
       });
     }
   );
@@ -102,8 +104,12 @@ export function note_put(req: express.Request, res: express.Response) {
 export function note_delete(req: express.Request, res: express.Response) {
   Note.findByIdAndDelete(
     req.params.noteID,
-    function (delError: mongoose.Document) {
+    async function (delError: mongoose.Document, delNote: NoteInterface) {
       if (delError) return res.status(400).json(delError);
+      if (delNote.image) {
+        const s3result = await deleteFile(delNote.image);
+        console.log(s3result);
+      }
       return res.status(200).json({
         message: `Successfully deleted note with id ${req.params.noteID}`,
       });

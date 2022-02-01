@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const Schema = mongoose_1.default.Schema;
 const noteSchema = new Schema({
-    series: { type: Schema.Types.ObjectId, ref: 'Series', required: false },
+    series: { type: Schema.Types.ObjectId, ref: 'Series', required: true },
     title: { type: String, required: true },
     location: { type: String, required: true },
     synopsis: { type: String, required: true },

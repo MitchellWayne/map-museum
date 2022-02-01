@@ -94,17 +94,23 @@ function note_put(req, res) {
             return res.status(400).json(updateError);
         return res.status(200).json({
             message: 'Successfully updated note.',
-            uri: `${req.host}/note/${updatedNote._id}`,
+            uri: `${req.hostname}/note/${updatedNote._id}`,
         });
     });
 }
 exports.note_put = note_put;
 function note_delete(req, res) {
-    note_1.default.findByIdAndDelete(req.params.noteID, function (delError) {
-        if (delError)
-            return res.status(400).json(delError);
-        return res.status(200).json({
-            message: `Successfully deleted note with id ${req.params.noteID}`,
+    note_1.default.findByIdAndDelete(req.params.noteID, function (delError, delNote) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (delError)
+                return res.status(400).json(delError);
+            if (delNote.image) {
+                const s3result = yield (0, s3_1.deleteFile)(delNote.image);
+                console.log(s3result);
+            }
+            return res.status(200).json({
+                message: `Successfully deleted note with id ${req.params.noteID}`,
+            });
         });
     });
 }

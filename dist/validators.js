@@ -32,7 +32,7 @@ function checkPost() {
             .trim()
             .isLength({ min: 1 })
             .escape(),
-        (0, express_validator_1.body)('synoposis', 'Synopsis field must not be empty.')
+        (0, express_validator_1.body)('synopsis', 'Synopsis field must not be empty.')
             .trim()
             .isLength({ min: 1 })
             .escape(),
