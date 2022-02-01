@@ -17,7 +17,7 @@ export function checkPost() {
       .trim()
       .isLength({ min: 1 })
       .escape(),
-    body('synoposis', 'Synopsis field must not be empty.')
+    body('synopsis', 'Synopsis field must not be empty.')
       .trim()
       .isLength({ min: 1 })
       .escape(),
