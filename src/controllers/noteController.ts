@@ -41,29 +41,31 @@ export function note_get(req: express.Request, res: express.Response) {
 // Create a new note
 // Should also return a URI to that new note
 export async function note_post(req: express.Request, res: express.Response) {
-  const errors = validationResult(req.body);
+  const errors = validationResult(req);
+  console.log(errors);
   let s3result = null;
   if (!errors.isEmpty()) return res.status(400).json(errors);
+  else {
+    if (req.file) {
+      s3result = await uploadFile(req.file);
+    }
 
-  if (req.file) {
-    s3result = await uploadFile(req.file);
-  }
-
-  new Note({
-    // series: req.body.series,
-    title: req.body.title,
-    location: req.body.location,
-    synopsis: req.body.synopsis,
-    locdetails: req.body.locdetails,
-    latlong: req.body.latlong,
-    image: s3result ? s3result.Key : null,
-  }).save((saveError: mongoose.Document, note: mongoose.Document) => {
-    if (saveError) return res.status(400).json({ saveError });
-    return res.status(201).json({
-      message: 'Successfully created note',
-      uri: `${req.hostname}/note/${note._id}`,
+    new Note({
+      series: req.body.series,
+      title: req.body.title,
+      location: req.body.location,
+      synopsis: req.body.synopsis,
+      locdetails: req.body.locdetails,
+      latlong: req.body.latlong,
+      image: s3result ? s3result.Key : null,
+    }).save((saveError: mongoose.Document, note: mongoose.Document) => {
+      if (saveError) return res.status(400).json({ saveError });
+      return res.status(201).json({
+        message: 'Successfully created note',
+        uri: `${req.hostname}/note/${note._id}`,
+      });
     });
-  });
+  }
 }
 
 // Update an existing note by _id

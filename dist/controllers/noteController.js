@@ -47,28 +47,32 @@ function note_get(req, res) {
 exports.note_get = note_get;
 function note_post(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const errors = (0, express_validator_1.validationResult)(req.body);
+        const errors = (0, express_validator_1.validationResult)(req);
+        console.log(errors);
         let s3result = null;
         if (!errors.isEmpty())
             return res.status(400).json(errors);
-        if (req.file) {
-            s3result = yield (0, s3_1.uploadFile)(req.file);
-        }
-        new note_1.default({
-            title: req.body.title,
-            location: req.body.location,
-            synopsis: req.body.synopsis,
-            locdetails: req.body.locdetails,
-            latlong: req.body.latlong,
-            image: s3result ? s3result.Key : null,
-        }).save((saveError, note) => {
-            if (saveError)
-                return res.status(400).json({ saveError });
-            return res.status(201).json({
-                message: 'Successfully created note',
-                uri: `${req.hostname}/note/${note._id}`,
+        else {
+            if (req.file) {
+                s3result = yield (0, s3_1.uploadFile)(req.file);
+            }
+            new note_1.default({
+                series: req.body.series,
+                title: req.body.title,
+                location: req.body.location,
+                synopsis: req.body.synopsis,
+                locdetails: req.body.locdetails,
+                latlong: req.body.latlong,
+                image: s3result ? s3result.Key : null,
+            }).save((saveError, note) => {
+                if (saveError)
+                    return res.status(400).json({ saveError });
+                return res.status(201).json({
+                    message: 'Successfully created note',
+                    uri: `${req.hostname}/note/${note._id}`,
+                });
             });
-        });
+        }
     });
 }
 exports.note_post = note_post;
