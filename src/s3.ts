@@ -1,6 +1,6 @@
 require('dotenv').config();
-import fs from 'fs';
 import streamifier from 'streamifier';
+import { v4 as uuidv4 } from 'uuid';
 import S3, {
   DeleteObjectRequest,
   GetObjectRequest,
@@ -19,14 +19,12 @@ const s3 = new S3({
 });
 
 export function uploadFile(file: Express.Multer.File) {
-  const fileStream = streamifier
-    .createReadStream(file.buffer)
-    .pipe(process.stdout);
+  const fileStream = streamifier.createReadStream(file.buffer);
 
   const uploadParams: PutObjectRequest = {
     Bucket: bucketName as string,
     Body: fileStream,
-    Key: file.filename,
+    Key: uuidv4(),
   };
 
   return s3.upload(uploadParams).promise();

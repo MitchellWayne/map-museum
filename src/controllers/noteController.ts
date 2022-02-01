@@ -50,7 +50,7 @@ export async function note_post(req: express.Request, res: express.Response) {
   }
 
   new Note({
-    series: req.body.series,
+    // series: req.body.series,
     title: req.body.title,
     location: req.body.location,
     synopsis: req.body.synopsis,
@@ -58,7 +58,7 @@ export async function note_post(req: express.Request, res: express.Response) {
     latlong: req.body.latlong,
     image: s3result ? s3result.Key : null,
   }).save((saveError: mongoose.Document, note: mongoose.Document) => {
-    if (saveError) return res.status(400).json(saveError);
+    if (saveError) return res.status(400).json({ saveError });
     return res.status(201).json({
       message: 'Successfully created note',
       uri: `${req.hostname}/note/${note._id}`,

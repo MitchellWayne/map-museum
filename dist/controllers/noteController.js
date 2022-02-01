@@ -55,7 +55,6 @@ function note_post(req, res) {
             s3result = yield (0, s3_1.uploadFile)(req.file);
         }
         new note_1.default({
-            series: req.body.series,
             title: req.body.title,
             location: req.body.location,
             synopsis: req.body.synopsis,
@@ -64,7 +63,7 @@ function note_post(req, res) {
             image: s3result ? s3result.Key : null,
         }).save((saveError, note) => {
             if (saveError)
-                return res.status(400).json(saveError);
+                return res.status(400).json({ saveError });
             return res.status(201).json({
                 message: 'Successfully created note',
                 uri: `${req.hostname}/note/${note._id}`,

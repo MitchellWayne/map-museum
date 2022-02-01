@@ -5,7 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFileStream = exports.deleteFile = exports.uploadFile = void 0;
 require('dotenv').config();
-const fs_1 = __importDefault(require("fs"));
+const streamifier_1 = __importDefault(require("streamifier"));
+const uuid_1 = require("uuid");
 const s3_1 = __importDefault(require("aws-sdk/clients/s3"));
 const bucketName = process.env.AWS_BUCKET_NAME;
 const region = process.env.AWS_BUCKET_REGION;
@@ -17,11 +18,11 @@ const s3 = new s3_1.default({
     secretAccessKey,
 });
 function uploadFile(file) {
-    const fileStream = fs_1.default.createReadStream(file.path);
+    const fileStream = streamifier_1.default.createReadStream(file.buffer);
     const uploadParams = {
         Bucket: bucketName,
         Body: fileStream,
-        Key: file.filename,
+        Key: (0, uuid_1.v4)(),
     };
     return s3.upload(uploadParams).promise();
 }
