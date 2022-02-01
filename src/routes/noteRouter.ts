@@ -14,18 +14,23 @@ import * as noteController from '../controllers/noteController.js';
 router.get('/', noteController.notelist_get);
 
 router.get('/:noteID', noteController.note_get);
+
 router.post(
   '/',
   upload.single('imgfile'),
   checkPost(),
   noteController.note_post
 );
+
 router.put(
   '/:noteID',
   upload.single('imgfile'),
   checkPost(),
   noteController.note_put
 );
+
 router.delete('/:noteID', noteController.note_delete);
+
+router.get('/:noteID/image/:key', noteController.noteimage_get);
 
 export default { router };

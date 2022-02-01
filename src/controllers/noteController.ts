@@ -99,8 +99,6 @@ export function note_put(req: express.Request, res: express.Response) {
 }
 
 // Delete an existing note by _id
-// Future:
-//  This will also have to delete the associated image in our AWS S3 storage solution
 export function note_delete(req: express.Request, res: express.Response) {
   Note.findByIdAndDelete(
     req.params.noteID,
@@ -115,4 +113,11 @@ export function note_delete(req: express.Request, res: express.Response) {
       });
     }
   );
+}
+
+export function noteimage_get(req: express.Request, res: express.Response) {
+  const key = req.params.key;
+  const readStream = getFileStream(key);
+
+  readStream.pipe(res);
 }

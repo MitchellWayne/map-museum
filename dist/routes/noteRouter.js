@@ -34,4 +34,5 @@ router.get('/:noteID', noteController.note_get);
 router.post('/', upload.single('imgfile'), (0, validators_1.checkPost)(), noteController.note_post);
 router.put('/:noteID', upload.single('imgfile'), (0, validators_1.checkPost)(), noteController.note_put);
 router.delete('/:noteID', noteController.note_delete);
+router.get('/:noteID/image/:key', noteController.noteimage_get);
 exports.default = { router };
