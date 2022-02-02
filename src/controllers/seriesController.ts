@@ -3,22 +3,21 @@ import mongoose from 'mongoose';
 import { validationResult } from 'express-validator';
 
 import Series from '../models/series';
-
 import { SeriesInterface } from '../types';
 
 export function serieslist_get(req: express.Request, res: express.Response) {
-  const seriesfilter = req.query;
+  const { seriesfilter } = req.query;
 
   Series.find()
     .select('name notes')
     .exec(function (err, serieslist) {
       if (err) return res.status(400).json(err);
-      else if (seriesfilter) {
+      if (seriesfilter) {
         serieslist = serieslist.filter((series) =>
           series.name.toLowerCase().includes(seriesfilter)
         );
-        return res.status(200).json(serieslist);
-      } else return res.status(200).json(serieslist);
+      }
+      return res.status(200).json(serieslist);
     });
 }
 

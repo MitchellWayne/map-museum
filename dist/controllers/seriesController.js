@@ -7,18 +7,16 @@ exports.series_post = exports.serieslist_get = void 0;
 const express_validator_1 = require("express-validator");
 const series_1 = __importDefault(require("../models/series"));
 function serieslist_get(req, res) {
-    const seriesfilter = req.query;
+    const { seriesfilter } = req.query;
     series_1.default.find()
         .select('name notes')
         .exec(function (err, serieslist) {
         if (err)
             return res.status(400).json(err);
-        else if (seriesfilter) {
+        if (seriesfilter) {
             serieslist = serieslist.filter((series) => series.name.toLowerCase().includes(seriesfilter));
-            return res.status(200).json(serieslist);
         }
-        else
-            return res.status(200).json(serieslist);
+        return res.status(200).json(serieslist);
     });
 }
 exports.serieslist_get = serieslist_get;
