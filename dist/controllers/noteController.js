@@ -77,15 +77,15 @@ function note_post(req, res) {
         yield note.save().catch((saveError) => {
             return res.status(400).json({ saveError });
         });
-        if (yield appendNoteToSeries(note._id, req.body.series)) {
+        if (yield appendNoteToSeries(note._id, note.series)) {
             return res.status(201).json({
-                message: 'Successfully created note',
+                message: `Successfully created note and appended to series of id '${note.series}'`,
                 uri: `${req.hostname}/note/${note._id}`,
             });
         }
         else {
             return res.status(201).json({
-                message: `Successfully created note but failed to save to Series with id '${req.body.series}'`,
+                message: `Successfully created note but failed to save to Series with id '${note.series}'`,
                 uri: `${req.hostname}/note/${note._id}`,
             });
         }
