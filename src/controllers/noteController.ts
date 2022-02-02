@@ -4,12 +4,27 @@ import { validationResult } from 'express-validator';
 import { uploadFile, deleteFile, getFileStream } from '../s3';
 
 import Note from '../models/note';
-import { NoteInterface } from '../types';
+import Series from '../models/series';
+import { NoteInterface, SeriesInterface } from '../types';
 
 // Hints
 // - Query params for specifying optional filters for data to return
 // - URL paths for returning data with strict rules / no optional filters
 // - Body params for interacting with CUD operations
+
+function appendNoteToSeries(
+  noteID: NoteInterface['_id'],
+  seriesID: SeriesInterface['_id']
+) {
+  Series.findByIdAndUpdate(
+    seriesID,
+    { $push: { notes: noteID } },
+    function (updateError: mongoose.Document) {
+      if (updateError) return false;
+      else return true;
+    }
+  );
+}
 
 // Return a list of notes with limited info
 export function notelist_get(req: express.Request, res: express.Response) {
@@ -59,10 +74,17 @@ export async function note_post(req: express.Request, res: express.Response) {
     image: s3result ? s3result.Key : null,
   }).save((saveError: mongoose.Document, note: NoteInterface) => {
     if (saveError) return res.status(400).json({ saveError });
-    return res.status(201).json({
-      message: 'Successfully created note',
-      uri: `${req.hostname}/note/${note._id}`,
-    });
+    if (appendNoteToSeries(note._id, req.body.series)) {
+      return res.status(201).json({
+        message: 'Successfully created note',
+        uri: `${req.hostname}/note/${note._id}`,
+      });
+    } else {
+      return res.status(201).json({
+        message: `Successfully created note but failed to save to Series with id '${req.body.series}'`,
+        uri: `${req.hostname}/note/${note._id}`,
+      });
+    }
   });
 }
 
