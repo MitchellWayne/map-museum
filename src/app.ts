@@ -45,11 +45,8 @@ app.use(function (req, res, next) {
 // error handler
 app.use(function (
   err: { message: any; status: any },
-  req: any,
-  // req: Express.Request,
-  res: any
-  // res: Express.Response
-  // next: any
+  req: express.Request,
+  res: express.Response
 ) {
   // set locals, only providing error in development
   res.locals.message = err.message;

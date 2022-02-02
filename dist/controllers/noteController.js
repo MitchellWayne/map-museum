@@ -84,13 +84,13 @@ function note_post(req, res) {
         if (yield updateSeries(note._id, note.series, true)) {
             return res.status(201).json({
                 message: `Successfully created note and appended to series of id '${note.series}'`,
-                uri: `${req.hostname}/note/${note._id}`,
+                uri: `${req.header('Host')}/note/${note._id}`,
             });
         }
         else {
             return res.status(201).json({
                 message: `Successfully created note but failed to save to Series with id '${note.series}'`,
-                uri: `${req.hostname}/note/${note._id}`,
+                uri: `${req.header('Host')}/note/${note._id}`,
             });
         }
     });
@@ -123,7 +123,7 @@ function note_put(req, res) {
                 return res.status(400).json(updateError);
             return res.status(200).json({
                 message: 'Successfully updated note.',
-                uri: `${req.hostname}/note/${updatedNote._id}`,
+                uri: `${req.header('Host')}/note/${updatedNote._id}`,
             });
         });
     });

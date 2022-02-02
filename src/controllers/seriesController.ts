@@ -32,7 +32,7 @@ export function series_post(req: express.Request, res: express.Response) {
     return res.status(201).json({
       series: series,
       message: 'Successfully created series',
-      // uri: `${req.hostname}/series/${series._id}`,
+      // uri: `${req.header('Host')}/series/${series._id}`,
     });
   });
 }
