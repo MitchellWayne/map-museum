@@ -8,7 +8,7 @@ const noteSchema = new Schema({
   synopsis: { type: String, required: true },
   locdetails: { type: String, required: true },
   latlong: { type: String, required: true }, // format is 'lat,long'
-  image: { type: String, required: true }, // this should be an img url for now, until you figure out image storage
+  image: { type: String, required: false },
 });
 
 // module.exports = mongoose.model('Note', noteSchema);

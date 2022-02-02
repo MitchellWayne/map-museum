@@ -12,6 +12,6 @@ const noteSchema = new Schema({
     synopsis: { type: String, required: true },
     locdetails: { type: String, required: true },
     latlong: { type: String, required: true },
-    image: { type: String, required: true },
+    image: { type: String, required: false },
 });
 exports.default = mongoose_1.default.model('Note', noteSchema);
