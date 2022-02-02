@@ -116,7 +116,7 @@ function note_put(req, res) {
             console.log(s3result);
             Object.assign(note, { image: s3result.Key });
         }
-        note_1.default.findByIdAndUpdate(req.params.nodeID, note, function (updateError, updatedNote) {
+        note_1.default.findByIdAndUpdate(req.params.noteID, note, function (updateError, updatedNote) {
             if (updateError)
                 return res.status(400).json(updateError);
             return res.status(200).json({

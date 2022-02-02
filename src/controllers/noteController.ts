@@ -120,7 +120,7 @@ export async function note_put(req: express.Request, res: express.Response) {
   }
 
   Note.findByIdAndUpdate(
-    req.params.nodeID,
+    req.params.noteID,
     note,
     function (updateError: mongoose.Document, updatedNote: NoteInterface) {
       if (updateError) return res.status(400).json(updateError);
