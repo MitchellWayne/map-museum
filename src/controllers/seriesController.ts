@@ -36,3 +36,20 @@ export function series_post(req: express.Request, res: express.Response) {
     });
   });
 }
+
+// Either allow deleting a series if its note array is empty,
+//  or change notes to have optional series
+//  (and update all related notes on series_delete)
+// For the former we can use findOneAndDelete instead
+//  and add query for {notes: $size: 0}
+export function series_delete(req: express.Request, res: express.Response) {
+  Series.findByIdAndDelete(
+    req.params.seriesID,
+    function (delError: mongoose.Document, delSeries: SeriesInterface) {
+      if (delError) return res.status(400).json(delError);
+      return res.status(200).json({
+        message: `Successfully deleted series ${delSeries.name} with id ${req.params.seriesID}`,
+      });
+    }
+  );
+}

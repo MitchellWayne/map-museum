@@ -9,4 +9,5 @@ router.get('/', seriesController.serieslist_get);
 
 router.post('/', checkSeries(), seriesController.series_post);
 
+router.delete('/:seriesID', seriesController.series_delete);
 export default { router };

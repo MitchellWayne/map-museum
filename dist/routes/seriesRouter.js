@@ -28,4 +28,5 @@ const validators_1 = require("../validators");
 const seriesController = __importStar(require("../controllers/seriesController.js"));
 router.get('/', seriesController.serieslist_get);
 router.post('/', (0, validators_1.checkSeries)(), seriesController.series_post);
+router.delete('/:seriesID', seriesController.series_delete);
 exports.default = { router };

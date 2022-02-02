@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.series_post = exports.serieslist_get = void 0;
+exports.series_delete = exports.series_post = exports.serieslist_get = void 0;
 const express_validator_1 = require("express-validator");
 const series_1 = __importDefault(require("../models/series"));
 function serieslist_get(req, res) {
@@ -36,3 +36,13 @@ function series_post(req, res) {
     });
 }
 exports.series_post = series_post;
+function series_delete(req, res) {
+    series_1.default.findByIdAndDelete(req.params.seriesID, function (delError, delSeries) {
+        if (delError)
+            return res.status(400).json(delError);
+        return res.status(200).json({
+            message: `Successfully deleted series ${delSeries.name} with id ${req.params.seriesID}`,
+        });
+    });
+}
+exports.series_delete = series_delete;
