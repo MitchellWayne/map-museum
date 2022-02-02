@@ -33,7 +33,7 @@ export function notelist_get(req: express.Request, res: express.Response) {
   const { seriesFilterID } = req.query;
 
   Note.find()
-    .select('series title longitude latitude')
+    .select('series title latlong')
     .exec(function (err, notelist) {
       if (err) return res.status(400).json(err);
       else if (seriesFilterID) {
