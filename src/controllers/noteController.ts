@@ -26,6 +26,20 @@ async function appendNoteToSeries(
   return true;
 }
 
+async function pullNoteFromSeries(
+  noteID: NoteInterface['_id'],
+  seriesID: SeriesInterface['_id']
+): Promise<boolean> {
+  const updateArg: mongoose.QueryOptions = { $pull: { notes: noteID } };
+  await Series.findByIdAndUpdate(seriesID, updateArg).catch(
+    (updateError: mongoose.Error) => {
+      console.log(updateError);
+      return false;
+    }
+  );
+  return true;
+}
+
 // Return a list of notes with limited info
 export function notelist_get(req: express.Request, res: express.Response) {
   const { seriesFilterID } = req.query;
@@ -132,20 +146,28 @@ export async function note_put(req: express.Request, res: express.Response) {
 }
 
 // Delete an existing note by _id
-export function note_delete(req: express.Request, res: express.Response) {
-  Note.findByIdAndDelete(
-    req.params.noteID,
-    async function (delError: mongoose.Document, delNote: NoteInterface) {
-      if (delError) return res.status(400).json(delError);
-      if (delNote.image) {
-        const s3result = await deleteFile(delNote.image);
-        console.log(s3result);
-      }
-      return res.status(200).json({
-        message: `Successfully deleted note with id ${req.params.noteID}`,
-      });
+export async function note_delete(req: express.Request, res: express.Response) {
+  const deletedNote = await Note.findByIdAndDelete(req.params.noteID).catch(
+    (delError: mongoose.Error) => {
+      return res.status(400).json({ delError });
     }
   );
+
+  console.log(deletedNote);
+
+  if (deletedNote.image) {
+    await deleteFile(deletedNote.image);
+  }
+
+  if (await pullNoteFromSeries(deletedNote._id, deletedNote.series)) {
+    return res.status(201).json({
+      message: `Successfully deleted note with id '${deletedNote._id}'`,
+    });
+  } else {
+    return res.status(201).json({
+      message: `Successfully deleted note with id '${deletedNote._id}' but failed to pull from Series with id '${deletedNote.series}'`,
+    });
+  }
 }
 
 export function noteimage_get(req: express.Request, res: express.Response) {

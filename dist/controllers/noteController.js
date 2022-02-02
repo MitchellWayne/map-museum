@@ -27,6 +27,16 @@ function appendNoteToSeries(noteID, seriesID) {
         return true;
     });
 }
+function pullNoteFromSeries(noteID, seriesID) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const updateArg = { $pull: { notes: noteID } };
+        yield series_1.default.findByIdAndUpdate(seriesID, updateArg).catch((updateError) => {
+            console.log(updateError);
+            return false;
+        });
+        return true;
+    });
+}
 function notelist_get(req, res) {
     const { seriesFilterID } = req.query;
     note_1.default.find()
@@ -126,18 +136,24 @@ function note_put(req, res) {
 }
 exports.note_put = note_put;
 function note_delete(req, res) {
-    note_1.default.findByIdAndDelete(req.params.noteID, function (delError, delNote) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (delError)
-                return res.status(400).json(delError);
-            if (delNote.image) {
-                const s3result = yield (0, s3_1.deleteFile)(delNote.image);
-                console.log(s3result);
-            }
-            return res.status(200).json({
-                message: `Successfully deleted note with id ${req.params.noteID}`,
-            });
+    return __awaiter(this, void 0, void 0, function* () {
+        const deletedNote = yield note_1.default.findByIdAndDelete(req.params.noteID).catch((delError) => {
+            return res.status(400).json({ delError });
         });
+        console.log(deletedNote);
+        if (deletedNote.image) {
+            yield (0, s3_1.deleteFile)(deletedNote.image);
+        }
+        if (yield pullNoteFromSeries(deletedNote._id, deletedNote.series)) {
+            return res.status(201).json({
+                message: `Successfully deleted note with id '${deletedNote._id}'`,
+            });
+        }
+        else {
+            return res.status(201).json({
+                message: `Successfully deleted note with id '${deletedNote._id}' but failed to pull from Series with id '${deletedNote.series}'`,
+            });
+        }
     });
 }
 exports.note_delete = note_delete;
