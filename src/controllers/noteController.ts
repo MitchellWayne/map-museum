@@ -12,25 +12,14 @@ import { NoteInterface, SeriesInterface } from '../types';
 // - URL paths for returning data with strict rules / no optional filters
 // - Body params for interacting with CUD operations
 
-async function appendNoteToSeries(
+async function updateSeries(
   noteID: NoteInterface['_id'],
-  seriesID: SeriesInterface['_id']
+  seriesID: SeriesInterface['_id'],
+  willPush: boolean
 ): Promise<boolean> {
-  const updateArg: mongoose.QueryOptions = { $push: { notes: noteID } };
-  await Series.findByIdAndUpdate(seriesID, updateArg).catch(
-    (updateError: mongoose.Error) => {
-      console.log(updateError); // For testing
-      return false;
-    }
-  );
-  return true;
-}
-
-async function pullNoteFromSeries(
-  noteID: NoteInterface['_id'],
-  seriesID: SeriesInterface['_id']
-): Promise<boolean> {
-  const updateArg: mongoose.QueryOptions = { $pull: { notes: noteID } };
+  let updateArg: mongoose.QueryOptions;
+  if (willPush) updateArg = { $push: { notes: noteID } };
+  else updateArg = { $pull: { notes: noteID } };
   await Series.findByIdAndUpdate(seriesID, updateArg).catch(
     (updateError: mongoose.Error) => {
       console.log(updateError);
@@ -92,7 +81,7 @@ export async function note_post(req: express.Request, res: express.Response) {
     return res.status(400).json({ saveError });
   });
 
-  if (await appendNoteToSeries(note._id, note.series)) {
+  if (await updateSeries(note._id, note.series, true)) {
     return res.status(201).json({
       message: `Successfully created note and appended to series of id '${note.series}'`,
       uri: `${req.hostname}/note/${note._id}`,
@@ -153,13 +142,11 @@ export async function note_delete(req: express.Request, res: express.Response) {
     }
   );
 
-  console.log(deletedNote);
-
   if (deletedNote.image) {
     await deleteFile(deletedNote.image);
   }
 
-  if (await pullNoteFromSeries(deletedNote._id, deletedNote.series)) {
+  if (await updateSeries(deletedNote._id, deletedNote.series, false)) {
     return res.status(201).json({
       message: `Successfully deleted note with id '${deletedNote._id}'`,
     });

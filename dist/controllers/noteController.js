@@ -17,19 +17,13 @@ const express_validator_1 = require("express-validator");
 const s3_1 = require("../s3");
 const note_1 = __importDefault(require("../models/note"));
 const series_1 = __importDefault(require("../models/series"));
-function appendNoteToSeries(noteID, seriesID) {
+function updateSeries(noteID, seriesID, willPush) {
     return __awaiter(this, void 0, void 0, function* () {
-        const updateArg = { $push: { notes: noteID } };
-        yield series_1.default.findByIdAndUpdate(seriesID, updateArg).catch((updateError) => {
-            console.log(updateError);
-            return false;
-        });
-        return true;
-    });
-}
-function pullNoteFromSeries(noteID, seriesID) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const updateArg = { $pull: { notes: noteID } };
+        let updateArg;
+        if (willPush)
+            updateArg = { $push: { notes: noteID } };
+        else
+            updateArg = { $pull: { notes: noteID } };
         yield series_1.default.findByIdAndUpdate(seriesID, updateArg).catch((updateError) => {
             console.log(updateError);
             return false;
@@ -87,7 +81,7 @@ function note_post(req, res) {
         yield note.save().catch((saveError) => {
             return res.status(400).json({ saveError });
         });
-        if (yield appendNoteToSeries(note._id, note.series)) {
+        if (yield updateSeries(note._id, note.series, true)) {
             return res.status(201).json({
                 message: `Successfully created note and appended to series of id '${note.series}'`,
                 uri: `${req.hostname}/note/${note._id}`,
@@ -140,11 +134,10 @@ function note_delete(req, res) {
         const deletedNote = yield note_1.default.findByIdAndDelete(req.params.noteID).catch((delError) => {
             return res.status(400).json({ delError });
         });
-        console.log(deletedNote);
         if (deletedNote.image) {
             yield (0, s3_1.deleteFile)(deletedNote.image);
         }
-        if (yield pullNoteFromSeries(deletedNote._id, deletedNote.series)) {
+        if (yield updateSeries(deletedNote._id, deletedNote.series, false)) {
             return res.status(201).json({
                 message: `Successfully deleted note with id '${deletedNote._id}'`,
             });
