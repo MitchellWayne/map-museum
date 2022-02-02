@@ -24,7 +24,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
+const validators_1 = require("../validators");
 const seriesController = __importStar(require("../controllers/seriesController.js"));
 router.get('/', seriesController.serieslist_get);
-router.post('/', seriesController.series_post);
+router.post('/', (0, validators_1.checkSeries)(), seriesController.series_post);
 exports.default = { router };
