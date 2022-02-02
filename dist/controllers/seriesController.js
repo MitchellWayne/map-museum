@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.series_post = exports.serieslist_get = void 0;
+const express_validator_1 = require("express-validator");
 const series_1 = __importDefault(require("../models/series"));
 function serieslist_get(req, res) {
     const seriesfilter = req.query;
@@ -22,6 +23,18 @@ function serieslist_get(req, res) {
 }
 exports.serieslist_get = serieslist_get;
 function series_post(req, res) {
-    return res.status(404).json(req.body);
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty())
+        return res.status(400).json(errors);
+    new series_1.default({
+        name: req.body.name,
+    }).save((saveError, series) => {
+        if (saveError)
+            return res.status(400).json({ saveError });
+        return res.status(201).json({
+            series: series,
+            message: 'Successfully created series',
+        });
+    });
 }
 exports.series_post = series_post;

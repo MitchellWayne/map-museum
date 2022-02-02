@@ -1,5 +1,10 @@
 import * as express from 'express';
+import mongoose from 'mongoose';
+import { validationResult } from 'express-validator';
+
 import Series from '../models/series';
+
+import { SeriesInterface } from '../types';
 
 export function serieslist_get(req: express.Request, res: express.Response) {
   const seriesfilter = req.query;
@@ -18,5 +23,17 @@ export function serieslist_get(req: express.Request, res: express.Response) {
 }
 
 export function series_post(req: express.Request, res: express.Response) {
-  return res.status(404).json(req.body);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json(errors);
+
+  new Series({
+    name: req.body.name,
+  }).save((saveError: mongoose.Document, series: SeriesInterface) => {
+    if (saveError) return res.status(400).json({ saveError });
+    return res.status(201).json({
+      series: series,
+      message: 'Successfully created series',
+      // uri: `${req.hostname}/series/${series._id}`,
+    });
+  });
 }
