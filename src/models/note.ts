@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const noteSchema = new Schema({
-  series: { type: Schema.Types.ObjectId, ref: 'Series', required: false },
+  series: { type: Schema.Types.ObjectId, ref: 'Series', required: true },
   title: { type: String, required: true },
   location: { type: String, required: true },
   synopsis: { type: String, required: true },
