@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkLatLong = exports.checkPost = void 0;
+exports.checkSeries = exports.checkLatLong = exports.checkPost = void 0;
 const express_validator_1 = require("express-validator");
 const series_1 = __importDefault(require("./models/series"));
 function checkPost() {
@@ -51,3 +51,12 @@ function checkLatLong() {
     ];
 }
 exports.checkLatLong = checkLatLong;
+function checkSeries() {
+    return [
+        (0, express_validator_1.body)('name', 'Series name must not be empty.')
+            .trim()
+            .isLength({ min: 1 })
+            .escape(),
+    ];
+}
+exports.checkSeries = checkSeries;

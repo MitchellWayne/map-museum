@@ -35,3 +35,12 @@ export function checkLatLong() {
       .isLatLong(),
   ];
 }
+
+export function checkSeries() {
+  return [
+    body('name', 'Series name must not be empty.')
+      .trim()
+      .isLength({ min: 1 })
+      .escape(),
+  ];
+}
