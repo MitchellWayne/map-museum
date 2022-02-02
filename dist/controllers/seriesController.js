@@ -47,7 +47,11 @@ function series_delete(req, res) {
         if (delError) {
             return res.status(400).json({
                 delError,
-                details: `Serieswith id '${req.params.seriesID}' DNE or its note array is not empty. Make sure to empty a series' note array before deleting it.`,
+            });
+        }
+        if (!delSeries) {
+            return res.status(400).json({
+                details: `Series with id '${req.params.seriesID}' DNE or its note array is not empty. Make sure to empty a series' note array before deleting it.`,
             });
         }
         return res.status(200).json({
