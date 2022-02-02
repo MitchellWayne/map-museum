@@ -115,7 +115,6 @@ export async function note_put(req: express.Request, res: express.Response) {
     );
 
     const s3result = await uploadFile(req.file);
-    console.log(s3result);
     Object.assign(note, { image: s3result.Key });
   }
 

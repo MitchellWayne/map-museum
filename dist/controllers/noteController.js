@@ -112,7 +112,6 @@ function note_put(req, res) {
                     (0, s3_1.deleteFile)(note.image);
             });
             const s3result = yield (0, s3_1.uploadFile)(req.file);
-            console.log(s3result);
             Object.assign(note, { image: s3result.Key });
         }
         note_1.default.findByIdAndUpdate(req.params.noteID, note, function (updateError, updatedNote) {
