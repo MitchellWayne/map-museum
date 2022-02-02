@@ -37,11 +37,6 @@ export function series_post(req: express.Request, res: express.Response) {
   });
 }
 
-// Either allow deleting a series if its note array is empty,
-//  or change notes to have optional series
-//  (and update all related notes on series_delete)
-// For the former we can use findOneAndDelete instead
-//  and add query for {notes: $size: 0}
 export function series_delete(req: express.Request, res: express.Response) {
   Series.findOneAndDelete(
     {
