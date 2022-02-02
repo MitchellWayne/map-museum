@@ -37,11 +37,21 @@ function series_post(req, res) {
 }
 exports.series_post = series_post;
 function series_delete(req, res) {
-    series_1.default.findByIdAndDelete(req.params.seriesID, function (delError, delSeries) {
-        if (delError)
-            return res.status(400).json(delError);
+    series_1.default.findOneAndDelete({
+        $and: [
+            { _id: { $eq: req.params.seriesID } },
+            { name: { $exists: true } },
+            { notes: { $size: 0 } },
+        ],
+    }, function (delError, delSeries) {
+        if (delError) {
+            return res.status(400).json({
+                delError,
+                details: `Serieswith id '${req.params.seriesID}' DNE or its note array is not empty. Make sure to empty a series' note array before deleting it.`,
+            });
+        }
         return res.status(200).json({
-            message: `Successfully deleted series ${delSeries.name} with id ${req.params.seriesID}`,
+            message: `Successfully deleted series '${delSeries.name}' with id ${req.params.seriesID}`,
         });
     });
 }

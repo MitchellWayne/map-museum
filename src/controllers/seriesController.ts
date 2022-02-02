@@ -43,12 +43,23 @@ export function series_post(req: express.Request, res: express.Response) {
 // For the former we can use findOneAndDelete instead
 //  and add query for {notes: $size: 0}
 export function series_delete(req: express.Request, res: express.Response) {
-  Series.findByIdAndDelete(
-    req.params.seriesID,
+  Series.findOneAndDelete(
+    {
+      $and: [
+        { _id: { $eq: req.params.seriesID } },
+        { name: { $exists: true } },
+        { notes: { $size: 0 } },
+      ],
+    },
     function (delError: mongoose.Document, delSeries: SeriesInterface) {
-      if (delError) return res.status(400).json(delError);
+      if (delError) {
+        return res.status(400).json({
+          delError,
+          details: `Serieswith id '${req.params.seriesID}' DNE or its note array is not empty. Make sure to empty a series' note array before deleting it.`,
+        });
+      }
       return res.status(200).json({
-        message: `Successfully deleted series ${delSeries.name} with id ${req.params.seriesID}`,
+        message: `Successfully deleted series '${delSeries.name}' with id ${req.params.seriesID}`,
       });
     }
   );
