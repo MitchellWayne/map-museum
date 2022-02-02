@@ -25,6 +25,11 @@ export function checkPost() {
       .trim()
       .isLength({ min: 1 })
       .escape(),
+  ];
+}
+
+export function checkLatLong() {
+  return [
     body('latlong', 'Invalid longitide / latitude coordinates.')
       .trim()
       .isLatLong(),

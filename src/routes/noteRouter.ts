@@ -3,7 +3,7 @@ import express from 'express';
 import multer from 'multer';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-import { checkPost } from '../validators';
+import { checkPost, checkLatLong } from '../validators';
 
 const router = express.Router();
 
@@ -19,6 +19,7 @@ router.post(
   '/',
   upload.single('imgfile'),
   checkPost(),
+  checkLatLong(),
   noteController.note_post
 );
 
