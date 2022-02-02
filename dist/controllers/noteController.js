@@ -18,19 +18,19 @@ const s3_1 = require("../s3");
 const note_1 = __importDefault(require("../models/note"));
 const series_1 = __importDefault(require("../models/series"));
 function appendNoteToSeries(noteID, seriesID) {
-    const updateArg = { $push: { notes: noteID } };
-    series_1.default.findByIdAndUpdate(seriesID, updateArg, function (updateError) {
-        if (updateError)
+    return __awaiter(this, void 0, void 0, function* () {
+        const updateArg = { $push: { notes: noteID } };
+        yield series_1.default.findByIdAndUpdate(seriesID, updateArg).catch((updateError) => {
+            console.log(updateError);
             return false;
-        else
-            return true;
+        });
+        return true;
     });
-    return false;
 }
 function notelist_get(req, res) {
     const { seriesFilterID } = req.query;
     note_1.default.find()
-        .select('series title longitude latitude')
+        .select('series title latlong')
         .exec(function (err, notelist) {
         if (err)
             return res.status(400).json(err);
@@ -65,7 +65,7 @@ function note_post(req, res) {
         if (req.file) {
             s3result = yield (0, s3_1.uploadFile)(req.file);
         }
-        new note_1.default({
+        const note = new note_1.default({
             series: req.body.series,
             title: req.body.title,
             location: req.body.location,
@@ -73,22 +73,22 @@ function note_post(req, res) {
             locdetails: req.body.locdetails,
             latlong: req.body.latlong,
             image: s3result ? s3result.Key : null,
-        }).save((saveError, note) => {
-            if (saveError)
-                return res.status(400).json({ saveError });
-            if (appendNoteToSeries(note._id, req.body.series)) {
-                return res.status(201).json({
-                    message: 'Successfully created note',
-                    uri: `${req.hostname}/note/${note._id}`,
-                });
-            }
-            else {
-                return res.status(201).json({
-                    message: `Successfully created note but failed to save to Series with id '${req.body.series}'`,
-                    uri: `${req.hostname}/note/${note._id}`,
-                });
-            }
         });
+        yield note.save().catch((saveError) => {
+            return res.status(400).json({ saveError });
+        });
+        if (yield appendNoteToSeries(note._id, req.body.series)) {
+            return res.status(201).json({
+                message: 'Successfully created note',
+                uri: `${req.hostname}/note/${note._id}`,
+            });
+        }
+        else {
+            return res.status(201).json({
+                message: `Successfully created note but failed to save to Series with id '${req.body.series}'`,
+                uri: `${req.hostname}/note/${note._id}`,
+            });
+        }
     });
 }
 exports.note_post = note_post;

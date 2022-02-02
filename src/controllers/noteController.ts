@@ -12,20 +12,18 @@ import { NoteInterface, SeriesInterface } from '../types';
 // - URL paths for returning data with strict rules / no optional filters
 // - Body params for interacting with CUD operations
 
-function appendNoteToSeries(
+async function appendNoteToSeries(
   noteID: NoteInterface['_id'],
   seriesID: SeriesInterface['_id']
-): boolean {
+): Promise<boolean> {
   const updateArg: mongoose.QueryOptions = { $push: { notes: noteID } };
-  Series.findByIdAndUpdate(
-    seriesID,
-    updateArg,
-    function (updateError: mongoose.Document) {
-      if (updateError) return false;
-      else return true;
+  await Series.findByIdAndUpdate(seriesID, updateArg).catch(
+    (updateError: mongoose.Error) => {
+      console.log(updateError); // For testing
+      return false;
     }
   );
-  return false;
+  return true;
 }
 
 // Return a list of notes with limited info
@@ -66,7 +64,7 @@ export async function note_post(req: express.Request, res: express.Response) {
     s3result = await uploadFile(req.file);
   }
 
-  new Note({
+  const note = new Note({
     series: req.body.series,
     title: req.body.title,
     location: req.body.location,
@@ -74,20 +72,23 @@ export async function note_post(req: express.Request, res: express.Response) {
     locdetails: req.body.locdetails,
     latlong: req.body.latlong,
     image: s3result ? s3result.Key : null,
-  }).save((saveError: mongoose.Document, note: NoteInterface) => {
-    if (saveError) return res.status(400).json({ saveError });
-    if (appendNoteToSeries(note._id, req.body.series)) {
-      return res.status(201).json({
-        message: 'Successfully created note',
-        uri: `${req.hostname}/note/${note._id}`,
-      });
-    } else {
-      return res.status(201).json({
-        message: `Successfully created note but failed to save to Series with id '${req.body.series}'`,
-        uri: `${req.hostname}/note/${note._id}`,
-      });
-    }
   });
+
+  await note.save().catch((saveError: mongoose.Error) => {
+    return res.status(400).json({ saveError });
+  });
+
+  if (await appendNoteToSeries(note._id, req.body.series)) {
+    return res.status(201).json({
+      message: 'Successfully created note',
+      uri: `${req.hostname}/note/${note._id}`,
+    });
+  } else {
+    return res.status(201).json({
+      message: `Successfully created note but failed to save to Series with id '${req.body.series}'`,
+      uri: `${req.hostname}/note/${note._id}`,
+    });
+  }
 }
 
 // Update an existing note by _id
