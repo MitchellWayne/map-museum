@@ -108,9 +108,9 @@ export async function note_put(req: express.Request, res: express.Response) {
     // Delete old image then concat new s3 key to updating note obj
     Note.findById(
       req.params.noteID,
-      async function (findError: mongoose.Document, note: NoteInterface) {
+      function (findError: mongoose.Document, note: NoteInterface) {
         if (findError) return res.status(400).json(findError);
-        deleteFile(note.image);
+        if (note.image) deleteFile(note.image);
       }
     );
 

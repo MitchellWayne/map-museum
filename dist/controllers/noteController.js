@@ -106,11 +106,10 @@ function note_put(req, res) {
         };
         if (req.file) {
             note_1.default.findById(req.params.noteID, function (findError, note) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    if (findError)
-                        return res.status(400).json(findError);
+                if (findError)
+                    return res.status(400).json(findError);
+                if (note.image)
                     (0, s3_1.deleteFile)(note.image);
-                });
             });
             const s3result = yield (0, s3_1.uploadFile)(req.file);
             console.log(s3result);
