@@ -1,11 +1,9 @@
 import * as express from 'express';
 import mongoose from 'mongoose';
 import { validationResult } from 'express-validator';
+import { uploadFile, deleteFile, getFileStream } from '../s3';
 
 import Note from '../models/note';
-import { uploadFile, deleteFile, getFileStream } from '../s3';
-// import Series from '../models/series';
-
 import { NoteInterface } from '../types';
 
 // Hints

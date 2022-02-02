@@ -14,8 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.noteimage_get = exports.note_delete = exports.note_put = exports.note_post = exports.note_get = exports.notelist_get = void 0;
 const express_validator_1 = require("express-validator");
-const note_1 = __importDefault(require("../models/note"));
 const s3_1 = require("../s3");
+const note_1 = __importDefault(require("../models/note"));
 function notelist_get(req, res) {
     const { seriesFilterID } = req.query;
     note_1.default.find()
