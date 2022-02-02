@@ -44,34 +44,32 @@ export function note_get(req: express.Request, res: express.Response) {
 // Should also return a URI to that new note
 export async function note_post(req: express.Request, res: express.Response) {
   const errors = validationResult(req);
-  console.log(errors);
   let s3result = null;
   if (!errors.isEmpty()) return res.status(400).json(errors);
-  else {
-    if (req.file) {
-      s3result = await uploadFile(req.file);
-    }
 
-    new Note({
-      series: req.body.series,
-      title: req.body.title,
-      location: req.body.location,
-      synopsis: req.body.synopsis,
-      locdetails: req.body.locdetails,
-      latlong: req.body.latlong,
-      image: s3result ? s3result.Key : null,
-    }).save((saveError: mongoose.Document, note: NoteInterface) => {
-      if (saveError) return res.status(400).json({ saveError });
-      return res.status(201).json({
-        message: 'Successfully created note',
-        uri: `${req.hostname}/note/${note._id}`,
-      });
-    });
+  if (req.file) {
+    s3result = await uploadFile(req.file);
   }
+
+  new Note({
+    series: req.body.series,
+    title: req.body.title,
+    location: req.body.location,
+    synopsis: req.body.synopsis,
+    locdetails: req.body.locdetails,
+    latlong: req.body.latlong,
+    image: s3result ? s3result.Key : null,
+  }).save((saveError: mongoose.Document, note: NoteInterface) => {
+    if (saveError) return res.status(400).json({ saveError });
+    return res.status(201).json({
+      message: 'Successfully created note',
+      uri: `${req.hostname}/note/${note._id}`,
+    });
+  });
 }
 
 // Update an existing note by _id
-export function note_put(req: express.Request, res: express.Response) {
+export async function note_put(req: express.Request, res: express.Response) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json(errors);
 
@@ -81,9 +79,22 @@ export function note_put(req: express.Request, res: express.Response) {
     location: req.body.location,
     synopsis: req.body.synopsis,
     locdetails: req.body.locdetails,
-    latlong: req.body.latlong,
-    image: req.body.image,
   };
+
+  if (req.file) {
+    // Delete old image then concat new s3 key to updating note obj
+    Note.findById(
+      req.params.noteID,
+      async function (findError: mongoose.Document, note: NoteInterface) {
+        if (findError) return res.status(400).json(findError);
+        deleteFile(note.image);
+      }
+    );
+
+    const s3result = await uploadFile(req.file);
+    console.log(s3result);
+    Object.assign(note, { image: s3result.Key });
+  }
 
   Note.findByIdAndUpdate(
     req.params.nodeID,

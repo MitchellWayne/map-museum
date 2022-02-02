@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkPost = void 0;
+exports.checkLatLong = exports.checkPost = void 0;
 const express_validator_1 = require("express-validator");
 const series_1 = __importDefault(require("./models/series"));
 function checkPost() {
@@ -40,9 +40,14 @@ function checkPost() {
             .trim()
             .isLength({ min: 1 })
             .escape(),
+    ];
+}
+exports.checkPost = checkPost;
+function checkLatLong() {
+    return [
         (0, express_validator_1.body)('latlong', 'Invalid longitide / latitude coordinates.')
             .trim()
             .isLatLong(),
     ];
 }
-exports.checkPost = checkPost;
+exports.checkLatLong = checkLatLong;

@@ -48,53 +48,62 @@ exports.note_get = note_get;
 function note_post(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const errors = (0, express_validator_1.validationResult)(req);
-        console.log(errors);
         let s3result = null;
         if (!errors.isEmpty())
             return res.status(400).json(errors);
-        else {
-            if (req.file) {
-                s3result = yield (0, s3_1.uploadFile)(req.file);
-            }
-            new note_1.default({
-                series: req.body.series,
-                title: req.body.title,
-                location: req.body.location,
-                synopsis: req.body.synopsis,
-                locdetails: req.body.locdetails,
-                latlong: req.body.latlong,
-                image: s3result ? s3result.Key : null,
-            }).save((saveError, note) => {
-                if (saveError)
-                    return res.status(400).json({ saveError });
-                return res.status(201).json({
-                    message: 'Successfully created note',
-                    uri: `${req.hostname}/note/${note._id}`,
-                });
-            });
+        if (req.file) {
+            s3result = yield (0, s3_1.uploadFile)(req.file);
         }
+        new note_1.default({
+            series: req.body.series,
+            title: req.body.title,
+            location: req.body.location,
+            synopsis: req.body.synopsis,
+            locdetails: req.body.locdetails,
+            latlong: req.body.latlong,
+            image: s3result ? s3result.Key : null,
+        }).save((saveError, note) => {
+            if (saveError)
+                return res.status(400).json({ saveError });
+            return res.status(201).json({
+                message: 'Successfully created note',
+                uri: `${req.hostname}/note/${note._id}`,
+            });
+        });
     });
 }
 exports.note_post = note_post;
 function note_put(req, res) {
-    const errors = (0, express_validator_1.validationResult)(req);
-    if (!errors.isEmpty())
-        return res.status(400).json(errors);
-    const note = {
-        series: req.body.series,
-        title: req.body.title,
-        location: req.body.location,
-        synopsis: req.body.synopsis,
-        locdetails: req.body.locdetails,
-        latlong: req.body.latlong,
-        image: req.body.image,
-    };
-    note_1.default.findByIdAndUpdate(req.params.nodeID, note, function (updateError, updatedNote) {
-        if (updateError)
-            return res.status(400).json(updateError);
-        return res.status(200).json({
-            message: 'Successfully updated note.',
-            uri: `${req.hostname}/note/${updatedNote._id}`,
+    return __awaiter(this, void 0, void 0, function* () {
+        const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty())
+            return res.status(400).json(errors);
+        const note = {
+            series: req.body.series,
+            title: req.body.title,
+            location: req.body.location,
+            synopsis: req.body.synopsis,
+            locdetails: req.body.locdetails,
+        };
+        if (req.file) {
+            note_1.default.findById(req.params.noteID, function (findError, note) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (findError)
+                        return res.status(400).json(findError);
+                    (0, s3_1.deleteFile)(note.image);
+                });
+            });
+            const s3result = yield (0, s3_1.uploadFile)(req.file);
+            console.log(s3result);
+            Object.assign(note, { image: s3result.Key });
+        }
+        note_1.default.findByIdAndUpdate(req.params.nodeID, note, function (updateError, updatedNote) {
+            if (updateError)
+                return res.status(400).json(updateError);
+            return res.status(200).json({
+                message: 'Successfully updated note.',
+                uri: `${req.hostname}/note/${updatedNote._id}`,
+            });
         });
     });
 }
