@@ -15,15 +15,17 @@ import { NoteInterface, SeriesInterface } from '../types';
 function appendNoteToSeries(
   noteID: NoteInterface['_id'],
   seriesID: SeriesInterface['_id']
-) {
+): boolean {
+  const updateArg: mongoose.QueryOptions = { $push: { notes: noteID } };
   Series.findByIdAndUpdate(
     seriesID,
-    { $push: { notes: noteID } },
+    updateArg,
     function (updateError: mongoose.Document) {
       if (updateError) return false;
       else return true;
     }
   );
+  return false;
 }
 
 // Return a list of notes with limited info

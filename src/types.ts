@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongoose';
 
 export interface NoteInterface {
-  _id: string;
+  _id: ObjectId;
   series: ObjectId;
   title: string;
   location: string;
@@ -12,7 +12,7 @@ export interface NoteInterface {
 }
 
 export interface SeriesInterface {
-  _id: string;
+  _id: ObjectId;
   name: string;
-  notes: [ObjectId];
+  notes: ObjectId[];
 }

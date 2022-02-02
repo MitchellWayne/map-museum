@@ -16,6 +16,17 @@ exports.noteimage_get = exports.note_delete = exports.note_put = exports.note_po
 const express_validator_1 = require("express-validator");
 const s3_1 = require("../s3");
 const note_1 = __importDefault(require("../models/note"));
+const series_1 = __importDefault(require("../models/series"));
+function appendNoteToSeries(noteID, seriesID) {
+    const updateArg = { $push: { notes: noteID } };
+    series_1.default.findByIdAndUpdate(seriesID, updateArg, function (updateError) {
+        if (updateError)
+            return false;
+        else
+            return true;
+    });
+    return false;
+}
 function notelist_get(req, res) {
     const { seriesFilterID } = req.query;
     note_1.default.find()
@@ -65,10 +76,18 @@ function note_post(req, res) {
         }).save((saveError, note) => {
             if (saveError)
                 return res.status(400).json({ saveError });
-            return res.status(201).json({
-                message: 'Successfully created note',
-                uri: `${req.hostname}/note/${note._id}`,
-            });
+            if (appendNoteToSeries(note._id, req.body.series)) {
+                return res.status(201).json({
+                    message: 'Successfully created note',
+                    uri: `${req.hostname}/note/${note._id}`,
+                });
+            }
+            else {
+                return res.status(201).json({
+                    message: `Successfully created note but failed to save to Series with id '${req.body.series}'`,
+                    uri: `${req.hostname}/note/${note._id}`,
+                });
+            }
         });
     });
 }
