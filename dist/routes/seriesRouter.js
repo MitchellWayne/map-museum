@@ -23,10 +23,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const passport_1 = __importDefault(require("passport"));
 const router = express_1.default.Router();
 const validators_1 = require("../validators");
 const seriesController = __importStar(require("../controllers/seriesController.js"));
 router.get('/', seriesController.serieslist_get);
-router.post('/', (0, validators_1.checkSeries)(), seriesController.series_post);
-router.delete('/:seriesID', seriesController.series_delete);
+router.post('/', (0, validators_1.checkSeries)(), passport_1.default.authenticate('jwt', { session: false }), seriesController.series_post);
+router.delete('/:seriesID', passport_1.default.authenticate('jwt', { session: false }), seriesController.series_delete);
 exports.default = { router };
