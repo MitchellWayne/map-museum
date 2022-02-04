@@ -11,6 +11,7 @@ import seriesRouter from './routes/seriesRouter';
 import adminRouter from './routes/adminRouter';
 
 require('dotenv').config();
+require('./passport');
 
 // MongoDB Setup
 import mongoose, { ConnectOptions } from 'mongoose';
