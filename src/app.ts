@@ -8,6 +8,7 @@ import passport from 'passport';
 import indexRouter from './routes/index';
 import noteRouter from './routes/noteRouter';
 import seriesRouter from './routes/seriesRouter';
+import adminRouter from './routes/adminRouter';
 
 require('dotenv').config();
 
@@ -38,6 +39,7 @@ app.use(passport.initialize());
 app.use('/', indexRouter.router);
 app.use('/note', noteRouter.router);
 app.use('/series', seriesRouter.router);
+app.use('/admin', adminRouter.router);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
