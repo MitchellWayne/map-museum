@@ -1,4 +1,5 @@
 import express from 'express';
+import passport from 'passport';
 
 import multer from 'multer';
 const storage = multer.memoryStorage();
@@ -17,6 +18,7 @@ router.get('/:noteID', noteController.note_get);
 
 router.post(
   '/',
+  passport.authenticate('jwt', { session: false }),
   upload.single('imgfile'),
   checkPost(),
   checkLatLong(),
@@ -25,12 +27,17 @@ router.post(
 
 router.put(
   '/:noteID',
+  passport.authenticate('jwt', { session: false }),
   upload.single('imgfile'),
   checkPost(),
   noteController.note_put
 );
 
-router.delete('/:noteID', noteController.note_delete);
+router.delete(
+  '/:noteID',
+  passport.authenticate('jwt', { session: false }),
+  noteController.note_delete
+);
 
 router.get('/:noteID/image/:key', noteController.noteimage_get);
 
