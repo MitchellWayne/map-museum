@@ -12,7 +12,6 @@ passport_1.default.use(new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.JWT_SECRET,
 }, function (jwtPayload, callback) {
-    console.log(jwtPayload);
     if (jwtPayload.userID == process.env.USER_ID)
         return callback(null, true);
     else
