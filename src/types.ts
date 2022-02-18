@@ -15,4 +15,5 @@ export interface SeriesInterface {
   _id: ObjectId;
   name: string;
   notes: ObjectId[];
+  image: string;
 }
