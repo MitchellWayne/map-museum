@@ -9,6 +9,7 @@ const path_1 = __importDefault(require("path"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const morgan_1 = __importDefault(require("morgan"));
 const passport_1 = __importDefault(require("passport"));
+const cors_1 = __importDefault(require("cors"));
 const index_1 = __importDefault(require("./routes/index"));
 const noteRouter_1 = __importDefault(require("./routes/noteRouter"));
 const seriesRouter_1 = __importDefault(require("./routes/seriesRouter"));
@@ -32,6 +33,9 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 app.use(passport_1.default.initialize());
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:4200',
+}));
 app.use('/', index_1.default.router);
 app.use('/note', noteRouter_1.default.router);
 app.use('/series', seriesRouter_1.default.router);

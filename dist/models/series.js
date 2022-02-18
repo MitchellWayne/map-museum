@@ -8,5 +8,6 @@ const Schema = mongoose_1.default.Schema;
 const seriesSchema = new Schema({
     name: { type: String, required: true },
     notes: [{ type: Schema.Types.ObjectId, ref: 'Note', required: false }],
+    image: { type: String, required: false },
 });
 exports.default = mongoose_1.default.model('Series', seriesSchema);
