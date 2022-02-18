@@ -109,3 +109,10 @@ export function series_delete(req: express.Request, res: express.Response) {
     }
   );
 }
+
+export function seriesimage_get(req: express.Request, res: express.Response) {
+  const key = req.params.key;
+  const readStream = getFileStream(key);
+
+  readStream.pipe(res);
+}

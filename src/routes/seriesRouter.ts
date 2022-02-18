@@ -31,4 +31,7 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   seriesController.series_delete
 );
+
+router.get('/:seriesID/image/:key', seriesController.seriesimage_get);
+
 export default { router };
