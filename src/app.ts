@@ -4,6 +4,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import passport from 'passport';
+import cors from 'cors';
 
 import indexRouter from './routes/index';
 import noteRouter from './routes/noteRouter';
@@ -35,6 +36,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
+
+app.use(
+  cors({
+    origin: 'http://localhost:4200',
+  })
+);
 
 // routing
 app.use('/', indexRouter.router);
