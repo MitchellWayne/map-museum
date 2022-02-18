@@ -10,7 +10,7 @@ export function serieslist_get(req: express.Request, res: express.Response) {
   const { seriesfilter } = req.query;
 
   Series.find()
-    .select('name notes')
+    .select('name notes image')
     .exec(function (err, serieslist) {
       if (err) return res.status(400).json(err);
       if (seriesfilter) {
@@ -38,13 +38,15 @@ export async function series_post(req: express.Request, res: express.Response) {
 
   await series
     .save()
-    .catch((saveError: mongoose.Error, series: SeriesInterface) => {
-      if (saveError) return res.status(400).json({ saveError });
+    .then((series: SeriesInterface) => {
       return res.status(201).json({
         series: series,
         message: 'Successfully created series',
         // uri: `${req.header('Host')}/series/${series._id}`,
       });
+    })
+    .catch((saveError: mongoose.Error) => {
+      if (saveError) return res.status(400).json({ saveError });
     });
 }
 

@@ -19,7 +19,7 @@ const series_1 = __importDefault(require("../models/series"));
 function serieslist_get(req, res) {
     const { seriesfilter } = req.query;
     series_1.default.find()
-        .select('name notes')
+        .select('name notes image')
         .exec(function (err, serieslist) {
         if (err)
             return res.status(400).json(err);
@@ -45,13 +45,15 @@ function series_post(req, res) {
         });
         yield series
             .save()
-            .catch((saveError, series) => {
-            if (saveError)
-                return res.status(400).json({ saveError });
+            .then((series) => {
             return res.status(201).json({
                 series: series,
                 message: 'Successfully created series',
             });
+        })
+            .catch((saveError) => {
+            if (saveError)
+                return res.status(400).json({ saveError });
         });
     });
 }
