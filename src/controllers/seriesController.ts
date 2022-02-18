@@ -1,6 +1,7 @@
 import * as express from 'express';
 import mongoose from 'mongoose';
 import { validationResult } from 'express-validator';
+import { uploadFile, deleteFile, getFileStream } from '../s3';
 
 import Series from '../models/series';
 import { SeriesInterface } from '../types';
@@ -21,20 +22,65 @@ export function serieslist_get(req: express.Request, res: express.Response) {
     });
 }
 
-export function series_post(req: express.Request, res: express.Response) {
+export async function series_post(req: express.Request, res: express.Response) {
+  const errors = validationResult(req);
+  let s3result = null;
+  if (!errors.isEmpty()) return res.status(400).json(errors);
+
+  if (req.file) {
+    s3result = await uploadFile(req.file);
+  }
+
+  const series = new Series({
+    name: req.body.name,
+    image: s3result ? s3result.Key : null,
+  });
+
+  await series
+    .save()
+    .catch((saveError: mongoose.Error, series: SeriesInterface) => {
+      if (saveError) return res.status(400).json({ saveError });
+      return res.status(201).json({
+        series: series,
+        message: 'Successfully created series',
+        // uri: `${req.header('Host')}/series/${series._id}`,
+      });
+    });
+}
+
+export async function series_put(req: express.Request, res: express.Response) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json(errors);
 
-  new Series({
+  const series = new Series({
     name: req.body.name,
-  }).save((saveError: mongoose.Document, series: SeriesInterface) => {
-    if (saveError) return res.status(400).json({ saveError });
-    return res.status(201).json({
-      series: series,
-      message: 'Successfully created series',
-      // uri: `${req.header('Host')}/series/${series._id}`,
-    });
   });
+
+  if (req.file) {
+    // Delete old image then concat new s3 key to updating series obj
+    Series.findById(
+      req.params.seriesID,
+      function (findError: mongoose.Document, series: SeriesInterface) {
+        if (findError) return res.status(400).json(findError);
+        if (series.image) deleteFile(series.image);
+      }
+    );
+
+    const s3result = await uploadFile(req.file);
+    Object.assign(series, { image: s3result.Key });
+  }
+
+  Series.findByIdAndUpdate(
+    req.params.seriesID,
+    series,
+    function (updateError: mongoose.Document, updatedSeries: SeriesInterface) {
+      if (updateError) return res.status(400).json(updateError);
+      return res.status(200).json({
+        message: 'Successfully updated series.',
+        uri: `${req.header('Host')}/series/${updatedSeries._id}`,
+      });
+    }
+  );
 }
 
 export function series_delete(req: express.Request, res: express.Response) {
