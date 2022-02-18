@@ -19,10 +19,16 @@ router.post(
   seriesController.series_post
 );
 
-router.delete(
+router.put(
   '/:seriesID',
   passport.authenticate('jwt', { session: false }),
   upload.single('imgfile'),
+  seriesController.series_put
+);
+
+router.delete(
+  '/:seriesID',
+  passport.authenticate('jwt', { session: false }),
   seriesController.series_delete
 );
 export default { router };
