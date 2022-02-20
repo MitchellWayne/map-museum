@@ -14,7 +14,7 @@ router.get('/', seriesController.serieslist_get);
 router.post(
   '/',
   passport.authenticate('jwt', { session: false }),
-  upload.single('imgfile'),
+  upload.array('imgfile', 2),
   checkSeries(),
   seriesController.series_post
 );
@@ -22,7 +22,7 @@ router.post(
 router.put(
   '/:seriesID',
   passport.authenticate('jwt', { session: false }),
-  upload.single('imgfile'),
+  upload.array('imgfile', 2),
   seriesController.series_put
 );
 
