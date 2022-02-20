@@ -88,6 +88,7 @@ function series_put(req, res) {
         if (!errors.isEmpty())
             return res.status(400).json(errors);
         const series = new series_1.default({
+            _id: req.params.seriesID,
             name: req.body.name,
         });
         let imageResult, mainImageResult = null;
@@ -128,7 +129,7 @@ function series_put(req, res) {
                 return res.status(400).json({ err });
             });
             mainImageResult = yield (0, s3_1.uploadFile)(images[1]);
-            Object.assign(series, { image: mainImageResult.Key });
+            Object.assign(series, { mainImage: mainImageResult.Key });
         }
         series_1.default.findByIdAndUpdate(req.params.seriesID, series, function (updateError, updatedSeries) {
             if (updateError)

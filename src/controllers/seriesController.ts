@@ -92,6 +92,7 @@ export async function series_put(req: express.Request, res: express.Response) {
   if (!errors.isEmpty()) return res.status(400).json(errors);
 
   const series = new Series({
+    _id: req.params.seriesID,
     name: req.body.name,
   });
 
@@ -146,7 +147,7 @@ export async function series_put(req: express.Request, res: express.Response) {
       });
 
     mainImageResult = await uploadFile(images[1]);
-    Object.assign(series, { image: mainImageResult.Key });
+    Object.assign(series, { mainImage: mainImageResult.Key });
   }
 
   Series.findByIdAndUpdate(
