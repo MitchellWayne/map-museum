@@ -142,6 +142,12 @@ function series_put(req, res) {
 }
 exports.series_put = series_put;
 function series_delete(req, res) {
+    series_1.default.findById(req.params.seriesID, function (findError, series) {
+        if (findError)
+            return res.status(400).json(findError);
+        if (series.image)
+            (0, s3_1.deleteFile)(series.image);
+    });
     series_1.default.findOneAndDelete({
         $and: [
             { _id: { $eq: req.params.seriesID } },
@@ -149,18 +155,24 @@ function series_delete(req, res) {
             { notes: { $size: 0 } },
         ],
     }, function (delError, delSeries) {
-        if (delError) {
-            return res.status(400).json({
-                delError,
+        return __awaiter(this, void 0, void 0, function* () {
+            if (delError) {
+                return res.status(400).json({
+                    delError,
+                });
+            }
+            if (!delSeries) {
+                return res.status(400).json({
+                    details: `Series with id '${req.params.seriesID}' DNE or its note array is not empty. Make sure to empty a series' note array before deleting it.`,
+                });
+            }
+            if (delSeries.image)
+                yield (0, s3_1.deleteFile)(delSeries.image);
+            if (delSeries.mainImage)
+                yield (0, s3_1.deleteFile)(delSeries.mainImage);
+            return res.status(200).json({
+                message: `Successfully deleted series '${delSeries.name}' with id ${req.params.seriesID}`,
             });
-        }
-        if (!delSeries) {
-            return res.status(400).json({
-                details: `Series with id '${req.params.seriesID}' DNE or its note array is not empty. Make sure to empty a series' note array before deleting it.`,
-            });
-        }
-        return res.status(200).json({
-            message: `Successfully deleted series '${delSeries.name}' with id ${req.params.seriesID}`,
         });
     });
 }

@@ -163,6 +163,15 @@ export async function series_put(req: express.Request, res: express.Response) {
 }
 
 export function series_delete(req: express.Request, res: express.Response) {
+  // Delete image first
+  Series.findById(
+    req.params.seriesID,
+    function (findError: mongoose.Document, series: SeriesInterface) {
+      if (findError) return res.status(400).json(findError);
+      if (series.image) deleteFile(series.image);
+    }
+  );
+
   Series.findOneAndDelete(
     {
       $and: [
@@ -171,7 +180,7 @@ export function series_delete(req: express.Request, res: express.Response) {
         { notes: { $size: 0 } },
       ],
     },
-    function (delError: mongoose.Document, delSeries: SeriesInterface) {
+    async function (delError: mongoose.Document, delSeries: SeriesInterface) {
       if (delError) {
         return res.status(400).json({
           delError,
@@ -182,6 +191,10 @@ export function series_delete(req: express.Request, res: express.Response) {
           details: `Series with id '${req.params.seriesID}' DNE or its note array is not empty. Make sure to empty a series' note array before deleting it.`,
         });
       }
+
+      if (delSeries.image) await deleteFile(delSeries.image);
+      if (delSeries.mainImage) await deleteFile(delSeries.mainImage);
+
       return res.status(200).json({
         message: `Successfully deleted series '${delSeries.name}' with id ${req.params.seriesID}`,
       });
