@@ -20,7 +20,7 @@ const jimp_1 = __importDefault(require("jimp"));
 function serieslist_get(req, res) {
     const { seriesfilter } = req.query;
     series_1.default.find()
-        .select('name notes image')
+        .select('name notes image mainImage')
         .exec(function (err, serieslist) {
         if (err)
             return res.status(400).json(err);

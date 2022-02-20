@@ -16,7 +16,7 @@ export function serieslist_get(req: express.Request, res: express.Response) {
   const { seriesfilter } = req.query;
 
   Series.find()
-    .select('name notes image')
+    .select('name notes image mainImage') // mainimage here for testing only, need a series_get for detailed
     .exec(function (err, serieslist) {
       if (err) return res.status(400).json(err);
       if (seriesfilter) {
