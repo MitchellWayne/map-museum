@@ -16,4 +16,5 @@ export interface SeriesInterface {
   name: string;
   notes: ObjectId[];
   image: string;
+  mainImage: string;
 }
