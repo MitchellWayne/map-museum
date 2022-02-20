@@ -5,6 +5,7 @@ const seriesSchema = new Schema({
   name: { type: String, required: true },
   notes: [{ type: Schema.Types.ObjectId, ref: 'Note', required: false }],
   image: { type: String, required: false },
+  mainImage: { type: String, required: false },
 });
 
 // module.exports = mongoose.model('Series', seriesSchema);
