@@ -87,19 +87,19 @@ function series_put(req, res) {
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty())
             return res.status(400).json(errors);
+        const targetSeries = yield series_1.default.findById(req.params.seriesID).exec();
+        if (!targetSeries)
+            return res.status(400).json({ err: 'series not found' });
         const series = new series_1.default({
-            _id: req.params.seriesID,
+            _id: targetSeries._id,
             name: req.body.name,
+            notes: targetSeries.notes,
         });
         let imageResult, mainImageResult = null;
         const images = req.files;
         if (images[0]) {
-            series_1.default.findById(req.params.seriesID, function (findError, series) {
-                if (findError)
-                    return res.status(400).json(findError);
-                if (series.image)
-                    (0, s3_1.deleteFile)(series.image);
-            });
+            if (targetSeries.image)
+                (0, s3_1.deleteFile)(targetSeries.image);
             const image = images[0].buffer;
             yield jimp_1.default.read(image)
                 .then((image) => __awaiter(this, void 0, void 0, function* () {
@@ -113,12 +113,8 @@ function series_put(req, res) {
             Object.assign(series, { image: imageResult.Key });
         }
         if (images[1]) {
-            series_1.default.findById(req.params.seriesID, function (findError, series) {
-                if (findError)
-                    return res.status(400).json(findError);
-                if (series.mainImage)
-                    (0, s3_1.deleteFile)(series.mainImage);
-            });
+            if (targetSeries.mainImage)
+                (0, s3_1.deleteFile)(targetSeries.mainImage);
             const image = images[1].buffer;
             yield jimp_1.default.read(image)
                 .then((image) => __awaiter(this, void 0, void 0, function* () {
