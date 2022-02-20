@@ -16,6 +16,7 @@ exports.seriesimage_get = exports.series_delete = exports.series_put = exports.s
 const express_validator_1 = require("express-validator");
 const s3_1 = require("../s3");
 const series_1 = __importDefault(require("../models/series"));
+const jimp_1 = __importDefault(require("jimp"));
 function serieslist_get(req, res) {
     const { seriesfilter } = req.query;
     series_1.default.find()
@@ -33,15 +34,38 @@ exports.serieslist_get = serieslist_get;
 function series_post(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const errors = (0, express_validator_1.validationResult)(req);
-        let s3result = null;
         if (!errors.isEmpty())
             return res.status(400).json(errors);
-        if (req.file) {
-            s3result = yield (0, s3_1.uploadFile)(req.file);
+        let imageResult, mainImageResult = null;
+        const images = req.files;
+        if (images[0]) {
+            const image = images[0].buffer;
+            yield jimp_1.default.read(image)
+                .then((image) => __awaiter(this, void 0, void 0, function* () {
+                image.cover(100, 100);
+                images[0].buffer = yield image.getBufferAsync(jimp_1.default.MIME_PNG);
+            }))
+                .catch((err) => {
+                return res.status(400).json({ err });
+            });
+            imageResult = yield (0, s3_1.uploadFile)(images[0]);
+        }
+        if (images[1]) {
+            const image = images[1].buffer;
+            yield jimp_1.default.read(image)
+                .then((image) => __awaiter(this, void 0, void 0, function* () {
+                image.cover(800, 500);
+                images[1].buffer = yield image.getBufferAsync(jimp_1.default.MIME_PNG);
+            }))
+                .catch((err) => {
+                return res.status(400).json({ err });
+            });
+            mainImageResult = yield (0, s3_1.uploadFile)(images[1]);
         }
         const series = new series_1.default({
             name: req.body.name,
-            image: s3result ? s3result.Key : null,
+            image: imageResult ? imageResult.Key : null,
+            mainImage: mainImageResult ? mainImageResult.Key : null,
         });
         yield series
             .save()
@@ -66,15 +90,45 @@ function series_put(req, res) {
         const series = new series_1.default({
             name: req.body.name,
         });
-        if (req.file) {
+        let imageResult, mainImageResult = null;
+        const images = req.files;
+        if (images[0]) {
             series_1.default.findById(req.params.seriesID, function (findError, series) {
                 if (findError)
                     return res.status(400).json(findError);
                 if (series.image)
                     (0, s3_1.deleteFile)(series.image);
             });
-            const s3result = yield (0, s3_1.uploadFile)(req.file);
-            Object.assign(series, { image: s3result.Key });
+            const image = images[0].buffer;
+            yield jimp_1.default.read(image)
+                .then((image) => __awaiter(this, void 0, void 0, function* () {
+                image.cover(100, 100);
+                images[0].buffer = yield image.getBufferAsync(jimp_1.default.MIME_PNG);
+            }))
+                .catch((err) => {
+                return res.status(400).json({ err });
+            });
+            imageResult = yield (0, s3_1.uploadFile)(images[0]);
+            Object.assign(series, { image: imageResult.Key });
+        }
+        if (images[1]) {
+            series_1.default.findById(req.params.seriesID, function (findError, series) {
+                if (findError)
+                    return res.status(400).json(findError);
+                if (series.mainImage)
+                    (0, s3_1.deleteFile)(series.mainImage);
+            });
+            const image = images[1].buffer;
+            yield jimp_1.default.read(image)
+                .then((image) => __awaiter(this, void 0, void 0, function* () {
+                image.cover(800, 500);
+                images[1].buffer = yield image.getBufferAsync(jimp_1.default.MIME_PNG);
+            }))
+                .catch((err) => {
+                return res.status(400).json({ err });
+            });
+            mainImageResult = yield (0, s3_1.uploadFile)(images[1]);
+            Object.assign(series, { image: mainImageResult.Key });
         }
         series_1.default.findByIdAndUpdate(req.params.seriesID, series, function (updateError, updatedSeries) {
             if (updateError)
