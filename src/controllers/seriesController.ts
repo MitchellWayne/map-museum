@@ -6,6 +6,12 @@ import { uploadFile, deleteFile, getFileStream } from '../s3';
 import Series from '../models/series';
 import { SeriesInterface } from '../types';
 
+import Jimp from 'jimp';
+
+// TODO
+// Extract Jimp image conversion and make standalone function
+// Should return a promise
+
 export function serieslist_get(req: express.Request, res: express.Response) {
   const { seriesfilter } = req.query;
 
@@ -24,16 +30,47 @@ export function serieslist_get(req: express.Request, res: express.Response) {
 
 export async function series_post(req: express.Request, res: express.Response) {
   const errors = validationResult(req);
-  let s3result = null;
   if (!errors.isEmpty()) return res.status(400).json(errors);
 
-  if (req.file) {
-    s3result = await uploadFile(req.file);
+  let imageResult,
+    mainImageResult = null;
+
+  const images = req.files as Array<Express.Multer.File>;
+
+  // Tiny image icon for search result
+  if (images[0]) {
+    const image = images[0].buffer;
+    await Jimp.read(image)
+      .then(async (image) => {
+        image.cover(100, 100);
+        images[0].buffer = await image.getBufferAsync(Jimp.MIME_PNG);
+      })
+      .catch((err: Error) => {
+        return res.status(400).json({ err });
+      });
+
+    imageResult = await uploadFile(images[0]);
+  }
+
+  // Large image for detailed series information
+  if (images[1]) {
+    const image = images[1].buffer;
+    await Jimp.read(image)
+      .then(async (image) => {
+        image.cover(800, 500);
+        images[1].buffer = await image.getBufferAsync(Jimp.MIME_PNG);
+      })
+      .catch((err: Error) => {
+        return res.status(400).json({ err });
+      });
+
+    mainImageResult = await uploadFile(images[1]);
   }
 
   const series = new Series({
     name: req.body.name,
-    image: s3result ? s3result.Key : null,
+    image: imageResult ? imageResult.Key : null,
+    mainImage: mainImageResult ? mainImageResult.Key : null,
   });
 
   await series
@@ -58,7 +95,13 @@ export async function series_put(req: express.Request, res: express.Response) {
     name: req.body.name,
   });
 
-  if (req.file) {
+  let imageResult,
+    mainImageResult = null;
+
+  const images = req.files as Array<Express.Multer.File>;
+
+  // Tiny image icon for search result
+  if (images[0]) {
     // Delete old image then concat new s3 key to updating series obj
     Series.findById(
       req.params.seriesID,
@@ -68,8 +111,42 @@ export async function series_put(req: express.Request, res: express.Response) {
       }
     );
 
-    const s3result = await uploadFile(req.file);
-    Object.assign(series, { image: s3result.Key });
+    const image = images[0].buffer;
+    await Jimp.read(image)
+      .then(async (image) => {
+        image.cover(100, 100);
+        images[0].buffer = await image.getBufferAsync(Jimp.MIME_PNG);
+      })
+      .catch((err: Error) => {
+        return res.status(400).json({ err });
+      });
+
+    imageResult = await uploadFile(images[0]);
+    Object.assign(series, { image: imageResult.Key });
+  }
+
+  // Large image for detailed series information
+  if (images[1]) {
+    Series.findById(
+      req.params.seriesID,
+      function (findError: mongoose.Document, series: SeriesInterface) {
+        if (findError) return res.status(400).json(findError);
+        if (series.mainImage) deleteFile(series.mainImage);
+      }
+    );
+
+    const image = images[1].buffer;
+    await Jimp.read(image)
+      .then(async (image) => {
+        image.cover(800, 500);
+        images[1].buffer = await image.getBufferAsync(Jimp.MIME_PNG);
+      })
+      .catch((err: Error) => {
+        return res.status(400).json({ err });
+      });
+
+    mainImageResult = await uploadFile(images[1]);
+    Object.assign(series, { image: mainImageResult.Key });
   }
 
   Series.findByIdAndUpdate(
