@@ -14,6 +14,7 @@ export interface NoteInterface {
 export interface SeriesInterface {
   _id: ObjectId;
   name: string;
+  description: string;
   notes: ObjectId[];
   image: string;
   mainImage: string;

@@ -16,7 +16,7 @@ export function serieslist_get(req: express.Request, res: express.Response) {
   const { seriesfilter } = req.query;
 
   Series.find()
-    .select('name notes image mainImage') // mainimage here for testing only, need a series_get for detailed
+    .select('name description notes image mainImage') // mainimage here for testing only, need a series_get for detailed maybe
     .exec(function (err, serieslist) {
       if (err) return res.status(400).json(err);
       if (seriesfilter) {
@@ -69,6 +69,7 @@ export async function series_post(req: express.Request, res: express.Response) {
 
   const series = new Series({
     name: req.body.name,
+    description: req.body.description,
     image: imageResult ? imageResult.Key : null,
     mainImage: mainImageResult ? mainImageResult.Key : null,
   });
@@ -100,6 +101,7 @@ export async function series_put(req: express.Request, res: express.Response) {
   const series = new Series({
     _id: targetSeries._id,
     name: req.body.name,
+    description: req.body.description,
     notes: targetSeries.notes,
   });
 

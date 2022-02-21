@@ -20,7 +20,7 @@ const jimp_1 = __importDefault(require("jimp"));
 function serieslist_get(req, res) {
     const { seriesfilter } = req.query;
     series_1.default.find()
-        .select('name notes image mainImage')
+        .select('name description notes image mainImage')
         .exec(function (err, serieslist) {
         if (err)
             return res.status(400).json(err);
@@ -64,6 +64,7 @@ function series_post(req, res) {
         }
         const series = new series_1.default({
             name: req.body.name,
+            description: req.body.description,
             image: imageResult ? imageResult.Key : null,
             mainImage: mainImageResult ? mainImageResult.Key : null,
         });
@@ -93,6 +94,7 @@ function series_put(req, res) {
         const series = new series_1.default({
             _id: targetSeries._id,
             name: req.body.name,
+            description: req.body.description,
             notes: targetSeries.notes,
         });
         let imageResult, mainImageResult = null;
