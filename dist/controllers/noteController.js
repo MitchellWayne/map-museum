@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.noteimage_get = exports.note_delete = exports.note_put = exports.note_post = exports.note_get = exports.notelist_get = void 0;
+exports.noteimage_get = exports.note_delete = exports.note_put = exports.note_post = exports.note_get = exports.notelistdetailed_get = exports.notelist_get = void 0;
 const express_validator_1 = require("express-validator");
 const s3_1 = require("../s3");
 const note_1 = __importDefault(require("../models/note"));
@@ -32,14 +32,14 @@ function updateSeries(noteID, seriesID, willPush) {
     });
 }
 function notelist_get(req, res) {
-    const { seriesFilterID } = req.query;
+    const { seriesfilterID } = req.query;
     note_1.default.find()
         .select('series title latlong')
         .exec(function (err, notelist) {
         if (err)
             return res.status(400).json(err);
-        else if (seriesFilterID) {
-            notelist = notelist.filter((note) => note.series === seriesFilterID);
+        else if (seriesfilterID) {
+            notelist = notelist.filter((note) => note.series === seriesfilterID);
             return res.status(200).json(notelist);
         }
         else
@@ -47,6 +47,17 @@ function notelist_get(req, res) {
     });
 }
 exports.notelist_get = notelist_get;
+function notelistdetailed_get(req, res) {
+    const { seriesfilterID } = req.query;
+    note_1.default.find({ series: seriesfilterID }).exec(function (err, notelist) {
+        if (err)
+            return res.status(400).json(err);
+        else {
+            return res.status(200).json(notelist);
+        }
+    });
+}
+exports.notelistdetailed_get = notelistdetailed_get;
 function note_get(req, res) {
     note_1.default.findById(req.params.noteID).exec(function (err, note) {
         if (err)

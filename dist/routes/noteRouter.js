@@ -31,6 +31,7 @@ const validators_1 = require("../validators");
 const router = express_1.default.Router();
 const noteController = __importStar(require("../controllers/noteController.js"));
 router.get('/', noteController.notelist_get);
+router.get('/detailed', noteController.notelistdetailed_get);
 router.get('/:noteID', noteController.note_get);
 router.post('/', passport_1.default.authenticate('jwt', { session: false }), upload.single('imgfile'), (0, validators_1.checkPost)(), (0, validators_1.checkLatLong)(), noteController.note_post);
 router.put('/:noteID', passport_1.default.authenticate('jwt', { session: false }), upload.single('imgfile'), (0, validators_1.checkPost)(), noteController.note_put);

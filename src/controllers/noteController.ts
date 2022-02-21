@@ -31,17 +31,32 @@ async function updateSeries(
 
 // Return a list of notes with limited info
 export function notelist_get(req: express.Request, res: express.Response) {
-  const { seriesFilterID } = req.query;
+  const { seriesfilterID } = req.query;
 
   Note.find()
     .select('series title latlong')
     .exec(function (err, notelist) {
       if (err) return res.status(400).json(err);
-      else if (seriesFilterID) {
-        notelist = notelist.filter((note) => note.series === seriesFilterID);
+      else if (seriesfilterID) {
+        notelist = notelist.filter((note) => note.series === seriesfilterID);
         return res.status(200).json(notelist);
       } else return res.status(200).json(notelist);
     });
+}
+
+// Return a detailed list of notes by series ID
+export function notelistdetailed_get(
+  req: express.Request,
+  res: express.Response
+) {
+  const { seriesfilterID } = req.query;
+
+  Note.find({ series: seriesfilterID }).exec(function (err, notelist) {
+    if (err) return res.status(400).json(err);
+    else {
+      return res.status(200).json(notelist);
+    }
+  });
 }
 
 // Return full note from _id (URL Path)
