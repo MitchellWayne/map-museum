@@ -39,7 +39,7 @@ function notelist_get(req, res) {
         if (err)
             return res.status(400).json(err);
         else if (seriesfilterID) {
-            notelist = notelist.filter((note) => note.series === seriesfilterID);
+            notelist = notelist.filter((note) => note.series == seriesfilterID);
             return res.status(200).json(notelist);
         }
         else
