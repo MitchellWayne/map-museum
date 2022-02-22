@@ -49,9 +49,13 @@ function notelist_get(req, res) {
 exports.notelist_get = notelist_get;
 function notelistdetailed_get(req, res) {
     const { seriesfilterID } = req.query;
-    note_1.default.find({ series: seriesfilterID }).exec(function (err, notelist) {
+    note_1.default.find().exec(function (err, notelist) {
         if (err)
             return res.status(400).json(err);
+        else if (seriesfilterID) {
+            notelist = notelist.filter((note) => note.series == seriesfilterID);
+            return res.status(200).json(notelist);
+        }
         else {
             return res.status(200).json(notelist);
         }
