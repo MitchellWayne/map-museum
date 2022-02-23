@@ -7,6 +7,8 @@ import Note from '../models/note';
 import Series from '../models/series';
 import { NoteInterface, SeriesInterface } from '../types';
 
+import Jimp from 'jimp';
+
 // Hints
 // - Query params for specifying optional filters for data to return
 // - URL paths for returning data with strict rules / no optional filters
@@ -78,11 +80,24 @@ export function note_get(req: express.Request, res: express.Response) {
 // Should also return a URI to that new note
 export async function note_post(req: express.Request, res: express.Response) {
   const errors = validationResult(req);
-  let s3result = null;
   if (!errors.isEmpty()) return res.status(400).json(errors);
 
+  let imageResult = null;
+
+  const images = req.file as Express.Multer.File;
+
   if (req.file) {
-    s3result = await uploadFile(req.file);
+    const image = req.file.buffer;
+    await Jimp.read(image)
+      .then(async (image) => {
+        image.cover(800, 500);
+        images.buffer = await image.getBufferAsync(Jimp.MIME_PNG);
+      })
+      .catch((err: Error) => {
+        return res.status(400).json({ err });
+      });
+
+    imageResult = await uploadFile(images);
   }
 
   const note = new Note({
@@ -92,7 +107,7 @@ export async function note_post(req: express.Request, res: express.Response) {
     synopsis: req.body.synopsis,
     locdetails: req.body.locdetails,
     latlong: req.body.latlong,
-    image: s3result ? s3result.Key : null,
+    image: imageResult ? imageResult.Key : null,
   });
 
   await note.save().catch((saveError: mongoose.Error) => {
@@ -125,9 +140,13 @@ export async function note_put(req: express.Request, res: express.Response) {
     locdetails: req.body.locdetails,
   };
 
+  let imageResult = null;
+
+  const images = req.file as Express.Multer.File;
+
   if (req.file) {
     // Delete old image then concat new s3 key to updating note obj
-    Note.findById(
+    await Note.findById(
       req.params.noteID,
       function (findError: mongoose.Document, note: NoteInterface) {
         if (findError) return res.status(400).json(findError);
@@ -135,8 +154,18 @@ export async function note_put(req: express.Request, res: express.Response) {
       }
     );
 
-    const s3result = await uploadFile(req.file);
-    Object.assign(note, { image: s3result.Key });
+    const image = req.file.buffer;
+    await Jimp.read(image)
+      .then(async (image) => {
+        image.cover(800, 500);
+        images.buffer = await image.getBufferAsync(Jimp.MIME_PNG);
+      })
+      .catch((err: Error) => {
+        return res.status(400).json({ err });
+      });
+
+    imageResult = await uploadFile(images);
+    Object.assign(note, { image: imageResult.Key });
   }
 
   Note.findByIdAndUpdate(

@@ -17,6 +17,7 @@ const express_validator_1 = require("express-validator");
 const s3_1 = require("../s3");
 const note_1 = __importDefault(require("../models/note"));
 const series_1 = __importDefault(require("../models/series"));
+const jimp_1 = __importDefault(require("jimp"));
 function updateSeries(noteID, seriesID, willPush) {
     return __awaiter(this, void 0, void 0, function* () {
         let updateArg;
@@ -78,11 +79,21 @@ exports.note_get = note_get;
 function note_post(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const errors = (0, express_validator_1.validationResult)(req);
-        let s3result = null;
         if (!errors.isEmpty())
             return res.status(400).json(errors);
+        let imageResult = null;
+        const images = req.file;
         if (req.file) {
-            s3result = yield (0, s3_1.uploadFile)(req.file);
+            const image = req.file.buffer;
+            yield jimp_1.default.read(image)
+                .then((image) => __awaiter(this, void 0, void 0, function* () {
+                image.cover(800, 500);
+                images.buffer = yield image.getBufferAsync(jimp_1.default.MIME_PNG);
+            }))
+                .catch((err) => {
+                return res.status(400).json({ err });
+            });
+            imageResult = yield (0, s3_1.uploadFile)(images);
         }
         const note = new note_1.default({
             series: req.body.series,
@@ -91,7 +102,7 @@ function note_post(req, res) {
             synopsis: req.body.synopsis,
             locdetails: req.body.locdetails,
             latlong: req.body.latlong,
-            image: s3result ? s3result.Key : null,
+            image: imageResult ? imageResult.Key : null,
         });
         yield note.save().catch((saveError) => {
             return res.status(400).json({ saveError });
@@ -123,15 +134,26 @@ function note_put(req, res) {
             synopsis: req.body.synopsis,
             locdetails: req.body.locdetails,
         };
+        let imageResult = null;
+        const images = req.file;
         if (req.file) {
-            note_1.default.findById(req.params.noteID, function (findError, note) {
+            yield note_1.default.findById(req.params.noteID, function (findError, note) {
                 if (findError)
                     return res.status(400).json(findError);
                 if (note.image)
                     (0, s3_1.deleteFile)(note.image);
             });
-            const s3result = yield (0, s3_1.uploadFile)(req.file);
-            Object.assign(note, { image: s3result.Key });
+            const image = req.file.buffer;
+            yield jimp_1.default.read(image)
+                .then((image) => __awaiter(this, void 0, void 0, function* () {
+                image.cover(800, 500);
+                images.buffer = yield image.getBufferAsync(jimp_1.default.MIME_PNG);
+            }))
+                .catch((err) => {
+                return res.status(400).json({ err });
+            });
+            imageResult = yield (0, s3_1.uploadFile)(images);
+            Object.assign(note, { image: imageResult.Key });
         }
         note_1.default.findByIdAndUpdate(req.params.noteID, note, function (updateError, updatedNote) {
             if (updateError)
