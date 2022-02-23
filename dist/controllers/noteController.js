@@ -88,6 +88,7 @@ function note_post(req, res) {
             yield jimp_1.default.read(image)
                 .then((image) => __awaiter(this, void 0, void 0, function* () {
                 image.cover(800, 500);
+                image.scaleToFit(800, 500);
                 images.buffer = yield image.getBufferAsync(jimp_1.default.MIME_PNG);
             }))
                 .catch((err) => {
@@ -127,6 +128,7 @@ function note_put(req, res) {
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty())
             return res.status(400).json(errors);
+        const targetNote = yield note_1.default.findById(req.params.noteID).exec();
         const note = {
             series: req.body.series,
             title: req.body.title,
@@ -137,16 +139,13 @@ function note_put(req, res) {
         let imageResult = null;
         const images = req.file;
         if (req.file) {
-            yield note_1.default.findById(req.params.noteID, function (findError, note) {
-                if (findError)
-                    return res.status(400).json(findError);
-                if (note.image)
-                    (0, s3_1.deleteFile)(note.image);
-            });
+            if (targetNote.image)
+                (0, s3_1.deleteFile)(targetNote.image);
             const image = req.file.buffer;
             yield jimp_1.default.read(image)
                 .then((image) => __awaiter(this, void 0, void 0, function* () {
                 image.cover(800, 500);
+                image.scaleToFit(800, 500);
                 images.buffer = yield image.getBufferAsync(jimp_1.default.MIME_PNG);
             }))
                 .catch((err) => {

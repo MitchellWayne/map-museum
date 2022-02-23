@@ -105,6 +105,7 @@ function series_put(req, res) {
             yield jimp_1.default.read(image)
                 .then((image) => __awaiter(this, void 0, void 0, function* () {
                 image.cover(100, 100);
+                image.scaleToFit(100, 100);
                 images[0].buffer = yield image.getBufferAsync(jimp_1.default.MIME_PNG);
             }))
                 .catch((err) => {
@@ -120,6 +121,7 @@ function series_put(req, res) {
             yield jimp_1.default.read(image)
                 .then((image) => __awaiter(this, void 0, void 0, function* () {
                 image.cover(800, 500);
+                image.scaleToFit(800, 500);
                 images[1].buffer = yield image.getBufferAsync(jimp_1.default.MIME_PNG);
             }))
                 .catch((err) => {

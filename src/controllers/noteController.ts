@@ -91,6 +91,7 @@ export async function note_post(req: express.Request, res: express.Response) {
     await Jimp.read(image)
       .then(async (image) => {
         image.cover(800, 500);
+        image.scaleToFit(800, 500);
         images.buffer = await image.getBufferAsync(Jimp.MIME_PNG);
       })
       .catch((err: Error) => {
@@ -132,6 +133,8 @@ export async function note_put(req: express.Request, res: express.Response) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json(errors);
 
+  const targetNote = await Note.findById(req.params.noteID).exec();
+
   const note = {
     series: req.body.series,
     title: req.body.title,
@@ -146,18 +149,13 @@ export async function note_put(req: express.Request, res: express.Response) {
 
   if (req.file) {
     // Delete old image then concat new s3 key to updating note obj
-    await Note.findById(
-      req.params.noteID,
-      function (findError: mongoose.Document, note: NoteInterface) {
-        if (findError) return res.status(400).json(findError);
-        if (note.image) deleteFile(note.image);
-      }
-    );
+    if (targetNote.image) deleteFile(targetNote.image);
 
     const image = req.file.buffer;
     await Jimp.read(image)
       .then(async (image) => {
         image.cover(800, 500);
+        image.scaleToFit(800, 500);
         images.buffer = await image.getBufferAsync(Jimp.MIME_PNG);
       })
       .catch((err: Error) => {

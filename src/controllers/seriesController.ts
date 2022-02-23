@@ -118,6 +118,7 @@ export async function series_put(req: express.Request, res: express.Response) {
     await Jimp.read(image)
       .then(async (image) => {
         image.cover(100, 100);
+        image.scaleToFit(100, 100);
         images[0].buffer = await image.getBufferAsync(Jimp.MIME_PNG);
       })
       .catch((err: Error) => {
@@ -136,6 +137,7 @@ export async function series_put(req: express.Request, res: express.Response) {
     await Jimp.read(image)
       .then(async (image) => {
         image.cover(800, 500);
+        image.scaleToFit(800, 500);
         images[1].buffer = await image.getBufferAsync(Jimp.MIME_PNG);
       })
       .catch((err: Error) => {
