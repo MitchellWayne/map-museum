@@ -98,12 +98,11 @@ export async function series_put(req: express.Request, res: express.Response) {
   if (!targetSeries) return res.status(400).json({ err: 'series not found' });
 
   // Construct series object to use for update
-  const series = new Series({
-    _id: targetSeries._id,
+  const series = {
     name: req.body.name,
     description: req.body.description,
     notes: targetSeries.notes,
-  });
+  };
 
   let imageResult,
     mainImageResult = null;

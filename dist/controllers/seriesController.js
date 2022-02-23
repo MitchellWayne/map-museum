@@ -91,12 +91,11 @@ function series_put(req, res) {
         const targetSeries = yield series_1.default.findById(req.params.seriesID).exec();
         if (!targetSeries)
             return res.status(400).json({ err: 'series not found' });
-        const series = new series_1.default({
-            _id: targetSeries._id,
+        const series = {
             name: req.body.name,
             description: req.body.description,
             notes: targetSeries.notes,
-        });
+        };
         let imageResult, mainImageResult = null;
         const images = req.files;
         if (images[0]) {
