@@ -165,7 +165,7 @@ export async function note_put(req: express.Request, res: express.Response) {
   if (images[0] && images[1]) {
     // Delete old image then concat new s3 key to updating note obj
     if (targetNote.image) deleteFile(targetNote.image);
-    if (targetNote.seriesimage) deleteFile(targetNote.seriesImage);
+    if (targetNote.seriesimage) deleteFile(targetNote.seriesimage);
 
     const image = images[0].buffer;
     await Jimp.read(image)

@@ -154,7 +154,7 @@ function note_put(req, res) {
             if (targetNote.image)
                 (0, s3_1.deleteFile)(targetNote.image);
             if (targetNote.seriesimage)
-                (0, s3_1.deleteFile)(targetNote.seriesImage);
+                (0, s3_1.deleteFile)(targetNote.seriesimage);
             const image = images[0].buffer;
             yield jimp_1.default.read(image)
                 .then((image) => __awaiter(this, void 0, void 0, function* () {
