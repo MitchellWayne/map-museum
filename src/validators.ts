@@ -13,18 +13,9 @@ export function checkPost() {
       .trim()
       .isLength({ min: 1 })
       .escape(),
-    body('location', 'Location field must not be empty.')
-      .trim()
-      .isLength({ min: 1 })
-      .escape(),
-    body('synopsis', 'Synopsis field must not be empty.')
-      .trim()
-      .isLength({ min: 1 })
-      .escape(),
-    body('locdetails', 'Location details field must not be empty.')
-      .trim()
-      .isLength({ min: 1 })
-      .escape(),
+    body('location').trim().escape(),
+    body('synopsis').trim().escape(),
+    body('locdetails').trim().escape(),
   ];
 }
 

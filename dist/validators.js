@@ -28,18 +28,9 @@ function checkPost() {
             .trim()
             .isLength({ min: 1 })
             .escape(),
-        (0, express_validator_1.body)('location', 'Location field must not be empty.')
-            .trim()
-            .isLength({ min: 1 })
-            .escape(),
-        (0, express_validator_1.body)('synopsis', 'Synopsis field must not be empty.')
-            .trim()
-            .isLength({ min: 1 })
-            .escape(),
-        (0, express_validator_1.body)('locdetails', 'Location details field must not be empty.')
-            .trim()
-            .isLength({ min: 1 })
-            .escape(),
+        (0, express_validator_1.body)('location').trim().escape(),
+        (0, express_validator_1.body)('synopsis').trim().escape(),
+        (0, express_validator_1.body)('locdetails').trim().escape(),
     ];
 }
 exports.checkPost = checkPost;
