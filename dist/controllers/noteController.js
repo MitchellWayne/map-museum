@@ -115,7 +115,7 @@ function note_post(req, res) {
             locdetails: req.body.locdetails,
             latlong: req.body.latlong,
             image: imageResult ? imageResult.Key : null,
-            seriesImage: seriesImageResult ? seriesImageResult.Key : null,
+            seriesimage: seriesImageResult ? seriesImageResult.Key : null,
         });
         yield note.save().catch((saveError) => {
             return res.status(400).json({ saveError });
@@ -153,7 +153,7 @@ function note_put(req, res) {
         if (images[0] && images[1]) {
             if (targetNote.image)
                 (0, s3_1.deleteFile)(targetNote.image);
-            if (targetNote.seriesImage)
+            if (targetNote.seriesimage)
                 (0, s3_1.deleteFile)(targetNote.seriesImage);
             const image = images[0].buffer;
             yield jimp_1.default.read(image)
@@ -178,7 +178,7 @@ function note_put(req, res) {
             imageResult = yield (0, s3_1.uploadFile)(images[0]);
             seriesImageResult = yield (0, s3_1.uploadFile)(images[1]);
             Object.assign(note, { image: imageResult.Key });
-            Object.assign(note, { seriesImage: seriesImageResult.Key });
+            Object.assign(note, { seriesimage: seriesImageResult.Key });
         }
         note_1.default.findByIdAndUpdate(req.params.noteID, note, function (updateError, updatedNote) {
             if (updateError)

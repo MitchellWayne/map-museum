@@ -122,7 +122,7 @@ export async function note_post(req: express.Request, res: express.Response) {
     locdetails: req.body.locdetails,
     latlong: req.body.latlong,
     image: imageResult ? imageResult.Key : null,
-    seriesImage: seriesImageResult ? seriesImageResult.Key : null,
+    seriesimage: seriesImageResult ? seriesImageResult.Key : null,
   });
 
   await note.save().catch((saveError: mongoose.Error) => {
@@ -165,7 +165,7 @@ export async function note_put(req: express.Request, res: express.Response) {
   if (images[0] && images[1]) {
     // Delete old image then concat new s3 key to updating note obj
     if (targetNote.image) deleteFile(targetNote.image);
-    if (targetNote.seriesImage) deleteFile(targetNote.seriesImage);
+    if (targetNote.seriesimage) deleteFile(targetNote.seriesImage);
 
     const image = images[0].buffer;
     await Jimp.read(image)
@@ -193,7 +193,7 @@ export async function note_put(req: express.Request, res: express.Response) {
     seriesImageResult = await uploadFile(images[1]);
 
     Object.assign(note, { image: imageResult.Key });
-    Object.assign(note, { seriesImage: seriesImageResult.Key });
+    Object.assign(note, { seriesimage: seriesImageResult.Key });
   }
 
   Note.findByIdAndUpdate(
