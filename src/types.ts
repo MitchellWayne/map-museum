@@ -9,6 +9,7 @@ export interface NoteInterface {
   locdetails: string;
   latlong: string;
   image: string;
+  seriesImage: string;
 }
 
 export interface SeriesInterface {

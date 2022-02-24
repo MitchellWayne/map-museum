@@ -82,23 +82,36 @@ export async function note_post(req: express.Request, res: express.Response) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json(errors);
 
-  let imageResult = null;
+  let imageResult,
+    seriesImageResult = null;
 
-  const images = req.file as Express.Multer.File;
+  const images = req.files as Array<Express.Multer.File>;
 
-  if (req.file) {
-    const image = req.file.buffer;
+  if (images[0] && images[1]) {
+    const image = images[0].buffer;
     await Jimp.read(image)
       .then(async (image) => {
         image.cover(800, 500);
         image.scaleToFit(800, 500);
-        images.buffer = await image.getBufferAsync(Jimp.MIME_PNG);
+        images[0].buffer = await image.getBufferAsync(Jimp.MIME_PNG);
       })
       .catch((err: Error) => {
         return res.status(400).json({ err });
       });
 
-    imageResult = await uploadFile(images);
+    const seriesImage = images[1].buffer;
+    await Jimp.read(seriesImage)
+      .then(async (seriesImage) => {
+        seriesImage.cover(800, 500);
+        seriesImage.scaleToFit(800, 500);
+        images[1].buffer = await seriesImage.getBufferAsync(Jimp.MIME_PNG);
+      })
+      .catch((err: Error) => {
+        return res.status(400).json({ err });
+      });
+
+    imageResult = await uploadFile(images[0]);
+    seriesImageResult = await uploadFile(images[1]);
   }
 
   const note = new Note({
@@ -109,6 +122,7 @@ export async function note_post(req: express.Request, res: express.Response) {
     locdetails: req.body.locdetails,
     latlong: req.body.latlong,
     image: imageResult ? imageResult.Key : null,
+    seriesImage: seriesImageResult ? seriesImageResult.Key : null,
   });
 
   await note.save().catch((saveError: mongoose.Error) => {
@@ -143,27 +157,43 @@ export async function note_put(req: express.Request, res: express.Response) {
     locdetails: req.body.locdetails,
   };
 
-  let imageResult = null;
+  let imageResult,
+    seriesImageResult = null;
 
-  const images = req.file as Express.Multer.File;
+  const images = req.files as Array<Express.Multer.File>;
 
-  if (req.file) {
+  if (images[0] && images[1]) {
     // Delete old image then concat new s3 key to updating note obj
     if (targetNote.image) deleteFile(targetNote.image);
+    if (targetNote.seriesImage) deleteFile(targetNote.seriesImage);
 
-    const image = req.file.buffer;
+    const image = images[0].buffer;
     await Jimp.read(image)
       .then(async (image) => {
         image.cover(800, 500);
         image.scaleToFit(800, 500);
-        images.buffer = await image.getBufferAsync(Jimp.MIME_PNG);
+        images[0].buffer = await image.getBufferAsync(Jimp.MIME_PNG);
       })
       .catch((err: Error) => {
         return res.status(400).json({ err });
       });
 
-    imageResult = await uploadFile(images);
+    const seriesImage = images[1].buffer;
+    await Jimp.read(seriesImage)
+      .then(async (seriesImage) => {
+        seriesImage.cover(800, 500);
+        seriesImage.scaleToFit(800, 500);
+        images[1].buffer = await seriesImage.getBufferAsync(Jimp.MIME_PNG);
+      })
+      .catch((err: Error) => {
+        return res.status(400).json({ err });
+      });
+
+    imageResult = await uploadFile(images[0]);
+    seriesImageResult = await uploadFile(images[1]);
+
     Object.assign(note, { image: imageResult.Key });
+    Object.assign(note, { seriesImage: seriesImageResult.Key });
   }
 
   Note.findByIdAndUpdate(
