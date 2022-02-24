@@ -33,8 +33,8 @@ const noteController = __importStar(require("../controllers/noteController.js"))
 router.get('/', noteController.notelist_get);
 router.get('/detailed', noteController.notelistdetailed_get);
 router.get('/:noteID', noteController.note_get);
-router.post('/', passport_1.default.authenticate('jwt', { session: false }), upload.single('imgfile'), (0, validators_1.checkPost)(), (0, validators_1.checkLatLong)(), noteController.note_post);
-router.put('/:noteID', passport_1.default.authenticate('jwt', { session: false }), upload.single('imgfile'), (0, validators_1.checkPost)(), noteController.note_put);
+router.post('/', passport_1.default.authenticate('jwt', { session: false }), upload.array('imgfile', 2), (0, validators_1.checkPost)(), (0, validators_1.checkLatLong)(), noteController.note_post);
+router.put('/:noteID', passport_1.default.authenticate('jwt', { session: false }), upload.array('imgfile', 2), (0, validators_1.checkPost)(), noteController.note_put);
 router.delete('/:noteID', passport_1.default.authenticate('jwt', { session: false }), noteController.note_delete);
 router.get('/:noteID/image/:key', noteController.noteimage_get);
 exports.default = { router };

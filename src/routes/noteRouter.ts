@@ -21,7 +21,7 @@ router.get('/:noteID', noteController.note_get);
 router.post(
   '/',
   passport.authenticate('jwt', { session: false }),
-  upload.single('imgfile'),
+  upload.array('imgfile', 2),
   checkPost(),
   checkLatLong(),
   noteController.note_post
@@ -30,7 +30,7 @@ router.post(
 router.put(
   '/:noteID',
   passport.authenticate('jwt', { session: false }),
-  upload.single('imgfile'),
+  upload.array('imgfile', 2),
   checkPost(),
   noteController.note_put
 );
