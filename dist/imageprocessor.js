@@ -12,29 +12,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.processImages = void 0;
+exports.processImage = void 0;
 const Jimp_1 = __importDefault(require("Jimp"));
 const s3_1 = require("./s3");
-function processImages(images, isIcon) {
+function processImage(image, isIcon) {
     return __awaiter(this, void 0, void 0, function* () {
-        const keys = [];
-        images.forEach((image) => __awaiter(this, void 0, void 0, function* () {
-            const imgBuffer = image.buffer;
-            Jimp_1.default.read(imgBuffer)
-                .then((imageBuffer) => __awaiter(this, void 0, void 0, function* () {
-                if (isIcon)
-                    imageBuffer.cover(100, 100);
-                else
-                    imageBuffer.cover(800, 500);
-                image.buffer = yield imageBuffer.getBufferAsync(Jimp_1.default.MIME_PNG);
-            }))
-                .catch(() => {
-                return [];
-            });
-            const imageKey = yield (0, s3_1.uploadFile)(image);
-            keys.push(imageKey.Key);
-        }));
-        return keys;
+        const imgBuffer = image.buffer;
+        yield Jimp_1.default.read(imgBuffer)
+            .then((imageBuffer) => __awaiter(this, void 0, void 0, function* () {
+            if (isIcon) {
+                imageBuffer.cover(100, 100);
+                imageBuffer.scaleToFit(100, 100);
+            }
+            else {
+                imageBuffer.cover(800, 500);
+                imageBuffer.scaleToFit(800, 500);
+            }
+            image.buffer = yield imageBuffer.getBufferAsync(Jimp_1.default.MIME_PNG);
+        }))
+            .catch(() => {
+            return null;
+        });
+        const uploadedImage = yield (0, s3_1.uploadFile)(image);
+        return uploadedImage;
     });
 }
-exports.processImages = processImages;
+exports.processImage = processImage;

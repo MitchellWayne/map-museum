@@ -9,8 +9,13 @@ export async function processImage(
   const imgBuffer = image.buffer;
   await Jimp.read(imgBuffer)
     .then(async (imageBuffer) => {
-      if (isIcon) imageBuffer.cover(100, 100);
-      else imageBuffer.cover(800, 500);
+      if (isIcon) {
+        imageBuffer.cover(100, 100);
+        imageBuffer.scaleToFit(100, 100);
+      } else {
+        imageBuffer.cover(800, 500);
+        imageBuffer.scaleToFit(800, 500);
+      }
       image.buffer = await imageBuffer.getBufferAsync(Jimp.MIME_PNG);
     })
     .catch(() => {
