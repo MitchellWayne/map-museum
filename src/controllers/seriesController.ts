@@ -1,12 +1,12 @@
 import * as express from 'express';
 import mongoose from 'mongoose';
 import { validationResult } from 'express-validator';
-import { uploadFile, deleteFile, getFileStream } from '../s3';
+import { deleteFile, getFileStream } from '../s3';
 
 import Series from '../models/series';
 import { SeriesInterface } from '../types';
 
-import Jimp from 'jimp';
+import { processImage } from '../imageprocessor';
 
 // TODO
 // Extract Jimp image conversion and make standalone function
@@ -32,46 +32,17 @@ export async function series_post(req: express.Request, res: express.Response) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json(errors);
 
-  let imageResult,
-    mainImageResult = null;
-
+  const imageData = [];
   const images = req.files as Array<Express.Multer.File>;
 
-  // Tiny image icon for search result
-  if (images[0]) {
-    const image = images[0].buffer;
-    await Jimp.read(image)
-      .then(async (image) => {
-        image.cover(100, 100);
-        images[0].buffer = await image.getBufferAsync(Jimp.MIME_PNG);
-      })
-      .catch((err: Error) => {
-        return res.status(400).json({ err });
-      });
-
-    imageResult = await uploadFile(images[0]);
-  }
-
-  // Large image for detailed series information
-  if (images[1]) {
-    const image = images[1].buffer;
-    await Jimp.read(image)
-      .then(async (image) => {
-        image.cover(800, 500);
-        images[1].buffer = await image.getBufferAsync(Jimp.MIME_PNG);
-      })
-      .catch((err: Error) => {
-        return res.status(400).json({ err });
-      });
-
-    mainImageResult = await uploadFile(images[1]);
-  }
+  if (images[0]) imageData.push(await processImage(images[0], true));
+  if (images[1]) imageData.push(await processImage(images[1], false));
 
   const series = new Series({
     name: req.body.name,
     description: req.body.description,
-    image: imageResult ? imageResult.Key : null,
-    mainImage: mainImageResult ? mainImageResult.Key : null,
+    image: imageData[0] ? imageData[0].Key : null,
+    mainImage: imageData[1] ? imageData[1].Key : null,
   });
 
   await series
@@ -94,7 +65,6 @@ export async function series_put(req: express.Request, res: express.Response) {
 
   // Set target to series we are updating
   const targetSeries = await Series.findById(req.params.seriesID).exec();
-
   if (!targetSeries) return res.status(400).json({ err: 'series not found' });
 
   // Construct series object to use for update
@@ -104,48 +74,19 @@ export async function series_put(req: express.Request, res: express.Response) {
     notes: targetSeries.notes,
   };
 
-  let imageResult,
-    mainImageResult = null;
-
   const images = req.files as Array<Express.Multer.File>;
 
-  // Tiny image icon for search result
+  // Icon
   if (images[0]) {
-    // Delete old image then concat new s3 key to updating series obj
     if (targetSeries.image) deleteFile(targetSeries.image);
-
-    const image = images[0].buffer;
-    await Jimp.read(image)
-      .then(async (image) => {
-        image.cover(100, 100);
-        image.scaleToFit(100, 100);
-        images[0].buffer = await image.getBufferAsync(Jimp.MIME_PNG);
-      })
-      .catch((err: Error) => {
-        return res.status(400).json({ err });
-      });
-
-    imageResult = await uploadFile(images[0]);
-    Object.assign(series, { image: imageResult.Key });
+    const iconResult = await processImage(images[0], true);
+    Object.assign(series, { image: iconResult.Key });
   }
-
-  // Large image for detailed series information
+  // Main Img
   if (images[1]) {
     if (targetSeries.mainImage) deleteFile(targetSeries.mainImage);
-
-    const image = images[1].buffer;
-    await Jimp.read(image)
-      .then(async (image) => {
-        image.cover(800, 500);
-        image.scaleToFit(800, 500);
-        images[1].buffer = await image.getBufferAsync(Jimp.MIME_PNG);
-      })
-      .catch((err: Error) => {
-        return res.status(400).json({ err });
-      });
-
-    mainImageResult = await uploadFile(images[1]);
-    Object.assign(series, { mainImage: mainImageResult.Key });
+    const imgResult = await processImage(images[1], false);
+    Object.assign(series, { mainImage: imgResult.Key });
   }
 
   Series.findByIdAndUpdate(

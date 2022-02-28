@@ -48,6 +48,10 @@ function checkSeries() {
             .trim()
             .isLength({ min: 1 })
             .escape(),
+        (0, express_validator_1.body)('description', 'Series description field must not be empty.')
+            .trim()
+            .isLength({ min: 1 })
+            .escape(),
     ];
 }
 exports.checkSeries = checkSeries;
