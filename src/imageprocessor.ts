@@ -1,10 +1,11 @@
+import { ManagedUpload } from 'aws-sdk/clients/s3';
 import Jimp from 'Jimp';
 import { uploadFile } from './s3';
 
 export async function processImage(
   image: Express.Multer.File,
   isIcon: boolean
-): Promise<string> {
+): Promise<ManagedUpload.SendData> {
   const imgBuffer = image.buffer;
   await Jimp.read(imgBuffer)
     .then(async (imageBuffer) => {
@@ -17,5 +18,5 @@ export async function processImage(
     });
 
   const uploadedImage = await uploadFile(image);
-  return uploadedImage.Key;
+  return uploadedImage;
 }
