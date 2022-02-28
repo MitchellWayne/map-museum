@@ -33,5 +33,9 @@ export function checkSeries() {
       .trim()
       .isLength({ min: 1 })
       .escape(),
+    body('description', 'Series description field must not be empty.')
+      .trim()
+      .isLength({ min: 1 })
+      .escape(),
   ];
 }
