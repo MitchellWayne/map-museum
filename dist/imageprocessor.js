@@ -17,7 +17,7 @@ const Jimp_1 = __importDefault(require("Jimp"));
 const s3_1 = require("./s3");
 function processImages(images, isIcon) {
     return __awaiter(this, void 0, void 0, function* () {
-        let keys = [];
+        const keys = [];
         images.forEach((image) => __awaiter(this, void 0, void 0, function* () {
             const imgBuffer = image.buffer;
             Jimp_1.default.read(imgBuffer)
