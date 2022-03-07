@@ -34,7 +34,7 @@ app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 app.use(passport_1.default.initialize());
 app.use((0, cors_1.default)({
-    origin: 'http://localhost:4200',
+    origin: ['http://localhost:4200', 'http://localhost:3000'],
 }));
 app.use('/', index_1.default.router);
 app.use('/note', noteRouter_1.default.router);
