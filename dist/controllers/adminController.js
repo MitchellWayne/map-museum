@@ -41,7 +41,7 @@ function login_post(req, res) {
             });
         }
         else {
-            return res.status(400).json({ message: 'Username or Password incorrect' });
+            return res.status(401).json({ message: 'Username or Password incorrect' });
         }
     });
 }

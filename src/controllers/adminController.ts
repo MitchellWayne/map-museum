@@ -33,6 +33,6 @@ export async function login_post(req: express.Request, res: express.Response) {
       message: 'Successfully logged in and attached token to http-only cookie.',
     });
   } else {
-    return res.status(400).json({ message: 'Username or Password incorrect' });
+    return res.status(401).json({ message: 'Username or Password incorrect' });
   }
 }
