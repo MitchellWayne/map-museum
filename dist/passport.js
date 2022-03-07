@@ -6,10 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const passport_1 = __importDefault(require("passport"));
 const passport_jwt_1 = __importDefault(require("passport-jwt"));
 const JWTStrategy = passport_jwt_1.default.Strategy;
-const ExtractJWT = passport_jwt_1.default.ExtractJwt;
 require('dotenv').config();
 passport_1.default.use(new JWTStrategy({
-    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+    jwtFromRequest: (req) => req.cookies.token,
     secretOrKey: process.env.JWT_SECRET,
 }, function (jwtPayload, callback) {
     if (jwtPayload.userID == process.env.USER_ID)

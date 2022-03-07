@@ -28,7 +28,10 @@ export async function login_post(req: express.Request, res: express.Response) {
       process.env.JWT_SECRET as string,
       { expiresIn: '12h' }
     );
-    return res.status(200).json({ token });
+    res.cookie('token', token, { httpOnly: true });
+    return res.status(200).json({
+      message: 'Successfully logged in and attached token to http-only cookie.',
+    });
   } else {
     return res.status(400).json({ message: 'Username or Password incorrect' });
   }

@@ -2,14 +2,15 @@ import passport from 'passport';
 import passportJWT from 'passport-jwt';
 
 const JWTStrategy = passportJWT.Strategy;
-const ExtractJWT = passportJWT.ExtractJwt;
+// const ExtractJWT = passportJWT.ExtractJwt;
 
 require('dotenv').config();
 
 passport.use(
   new JWTStrategy(
     {
-      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+      // jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: (req) => req.cookies.token,
       secretOrKey: process.env.JWT_SECRET,
     },
     function (jwtPayload, callback) {
