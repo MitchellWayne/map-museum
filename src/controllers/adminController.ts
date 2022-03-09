@@ -4,6 +4,7 @@ import bcryptjs from 'bcryptjs';
 
 require('dotenv').config();
 
+// This needs a fix for posting illegal arguments like undefined
 async function checkLogin(
   username: string,
   password: string
