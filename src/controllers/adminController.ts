@@ -36,3 +36,7 @@ export async function login_post(req: express.Request, res: express.Response) {
     return res.status(401).json({ message: 'Username or Password incorrect' });
   }
 }
+
+export function get_mapsAPI(req: express.Request, res: express.Response) {
+  return res.status(200).json({ apikey: process.env.MAPS_APIKEY });
+}
