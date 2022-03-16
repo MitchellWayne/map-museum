@@ -104,13 +104,13 @@ export async function series_put(req: express.Request, res: express.Response) {
 
 export function series_delete(req: express.Request, res: express.Response) {
   // Delete image first
-  Series.findById(
-    req.params.seriesID,
-    function (findError: mongoose.Document, series: SeriesInterface) {
-      if (findError) return res.status(400).json(findError);
-      if (series.image) deleteFile(series.image);
-    }
-  );
+  // Series.findById(
+  //   req.params.seriesID,
+  //   function (findError: mongoose.Document, series: SeriesInterface) {
+  //     if (findError) return res.status(400).json(findError);
+  //     if (series.image) deleteFile(series.image);
+  //   }
+  // );
 
   Series.findOneAndDelete(
     {

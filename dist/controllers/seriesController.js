@@ -101,12 +101,6 @@ function series_put(req, res) {
 }
 exports.series_put = series_put;
 function series_delete(req, res) {
-    series_1.default.findById(req.params.seriesID, function (findError, series) {
-        if (findError)
-            return res.status(400).json(findError);
-        if (series.image)
-            (0, s3_1.deleteFile)(series.image);
-    });
     series_1.default.findOneAndDelete({
         $and: [
             { _id: { $eq: req.params.seriesID } },
