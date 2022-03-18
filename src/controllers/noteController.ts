@@ -163,9 +163,8 @@ export async function note_delete(req: express.Request, res: express.Response) {
     }
   );
 
-  if (deletedNote.image) {
-    await deleteFile(deletedNote.image);
-  }
+  if (deletedNote.image) await deleteFile(deletedNote.image);
+  if (deletedNote.seriesimage) await deleteFile(deletedNote.seriesimage);
 
   if (await updateSeries(deletedNote._id, deletedNote.series, false)) {
     return res.status(201).json({

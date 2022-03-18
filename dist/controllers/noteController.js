@@ -159,9 +159,10 @@ function note_delete(req, res) {
         const deletedNote = yield note_1.default.findByIdAndDelete(req.params.noteID).catch((delError) => {
             return res.status(400).json({ delError });
         });
-        if (deletedNote.image) {
+        if (deletedNote.image)
             yield (0, s3_1.deleteFile)(deletedNote.image);
-        }
+        if (deletedNote.seriesimage)
+            yield (0, s3_1.deleteFile)(deletedNote.seriesimage);
         if (yield updateSeries(deletedNote._id, deletedNote.series, false)) {
             return res.status(201).json({
                 message: `Successfully deleted note with id '${deletedNote._id}'`,
