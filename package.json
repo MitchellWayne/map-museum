@@ -12,7 +12,7 @@
     "serverstart": "DEBUG=map-museum:* npm run dev",
     "udev": "nodemon ./bin/www",
     "userverstart": "DEBUG=map-museum:* npm run udev",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
   },
   "dependencies": {
     "aws-sdk": "^2.1066.0",
@@ -33,7 +33,6 @@
     "passport-jwt": "^4.0.0",
     "pug": "^3.0.2",
     "streamifier": "^0.1.1",
-    "typescript": "^4.6.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -54,6 +53,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "nodemon": "^2.0.15",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "typescript": "^4.6.2"
   }
 }
