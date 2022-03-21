@@ -12,8 +12,7 @@
     "serverstart": "DEBUG=map-museum:* npm run dev",
     "udev": "nodemon ./bin/www",
     "userverstart": "DEBUG=map-museum:* npm run udev",
-    "tsc": "tsc",
-    "postinstall": "npm run tsc",
+    "postinstall": "npm run build",
     "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "dependencies": {
