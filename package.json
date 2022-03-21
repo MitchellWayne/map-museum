@@ -10,8 +10,6 @@
     "start": "node ./bin/www",
     "dev": "tsc -w & nodemon ./bin/www",
     "serverstart": "DEBUG=map-museum:* npm run dev",
-    "udev": "nodemon ./bin/www",
-    "userverstart": "DEBUG=map-museum:* npm run udev",
     "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "dependencies": {
