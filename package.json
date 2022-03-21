@@ -6,7 +6,8 @@
     "node": "^17.4.0"
   },
   "scripts": {
-    "start": "node ./bin/www",
+    "build": "tsc",
+    "start": "npm run build && node ./bin/www",
     "dev": "tsc -w & nodemon ./bin/www",
     "serverstart": "DEBUG=map-museum:* npm run dev",
     "heroku-postbuild": "cd client && npm install && npm run build"
