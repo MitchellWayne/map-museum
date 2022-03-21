@@ -1,5 +1,5 @@
 import { ManagedUpload } from 'aws-sdk/clients/s3';
-import Jimp from 'Jimp';
+import Jimp from 'jimp';
 import { uploadFile } from './s3';
 
 export async function processImage(
