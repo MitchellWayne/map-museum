@@ -31,9 +31,7 @@
     "passport-jwt": "^4.0.0",
     "pug": "^3.0.2",
     "streamifier": "^0.1.1",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
+    "uuid": "^8.3.2",
     "@types/bcryptjs": "^2.4.2",
     "@types/cookie-parser": "^1.4.2",
     "@types/cors": "^2.8.12",
@@ -47,11 +45,13 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
+    "typescript": "^4.6.2"
+  },
+  "devDependencies": {
     "eslint": "^8.8.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "nodemon": "^2.0.15",
-    "prettier": "^2.5.1",
-    "typescript": "^4.6.2"
+    "prettier": "^2.5.1"
   }
 }
