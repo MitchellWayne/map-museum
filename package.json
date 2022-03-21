@@ -6,7 +6,6 @@
     "node": "^17.4.0"
   },
   "scripts": {
-    "build": "tsc",
     "start": "node ./bin/www",
     "dev": "tsc -w & nodemon ./bin/www",
     "serverstart": "DEBUG=map-museum:* npm run dev",
