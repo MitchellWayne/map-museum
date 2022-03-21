@@ -37,6 +37,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, 'client/build')));
+
 // app.use(
 //   cors({
 //     origin: ['http://localhost:4200', 'http://localhost:3000'],
@@ -48,6 +51,11 @@ app.use('/', indexRouter.router);
 app.use('/note', noteRouter.router);
 app.use('/series', seriesRouter.router);
 app.use('/admin', adminRouter.router);
+
+// Anything that doesn't match the above, send back client index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/client/build/index.html'));
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
