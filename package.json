@@ -12,7 +12,9 @@
     "serverstart": "DEBUG=map-museum:* npm run dev",
     "udev": "nodemon ./bin/www",
     "userverstart": "DEBUG=map-museum:* npm run udev",
-    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
+    "tsc": "tsc",
+    "postinstall": "npm run tsc",
+    "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "dependencies": {
     "aws-sdk": "^2.1066.0",
