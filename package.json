@@ -6,11 +6,10 @@
     "node": "^17.4.0"
   },
   "scripts": {
-    "build": "tsc",
-    "start": "npm run build && node ./bin/www",
+    "start": "node ./bin/www",
     "dev": "tsc -w & nodemon ./bin/www",
     "serverstart": "DEBUG=map-museum:* npm run dev",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "heroku-postbuild": "tsc && cd client && npm install && npm run build"
   },
   "dependencies": {
     "aws-sdk": "^2.1066.0",
