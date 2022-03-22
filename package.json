@@ -9,7 +9,7 @@
     "start": "node ./bin/www",
     "dev": "tsc -w & nodemon ./bin/www",
     "serverstart": "DEBUG=map-museum:* npm run dev",
-    "heroku-postbuild": "tsc && cd client && npm install && npm run build"
+    "heroku-postbuild": "tsc && cd dist/client && npm install && npm run build"
   },
   "dependencies": {
     "aws-sdk": "^2.1066.0",
