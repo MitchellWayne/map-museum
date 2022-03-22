@@ -27,6 +27,7 @@ function Login() {
         document.cookie = `loggedIn=true; max-age=${60 * 60 * 12}`;
         nav('/client');
       } else {
+        console.log(parsedResponse);
         // setError(parsedResponse.message);
         setError('Invalid credentials');
       }
