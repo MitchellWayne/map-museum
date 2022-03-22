@@ -13,12 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.processImage = void 0;
-const Jimp_1 = __importDefault(require("Jimp"));
+const jimp_1 = __importDefault(require("jimp"));
 const s3_1 = require("./s3");
 function processImage(image, isIcon) {
     return __awaiter(this, void 0, void 0, function* () {
         const imgBuffer = image.buffer;
-        yield Jimp_1.default.read(imgBuffer)
+        yield jimp_1.default.read(imgBuffer)
             .then((imageBuffer) => __awaiter(this, void 0, void 0, function* () {
             if (isIcon) {
                 imageBuffer.cover(100, 100);
@@ -28,7 +28,7 @@ function processImage(image, isIcon) {
                 imageBuffer.cover(800, 500);
                 imageBuffer.scaleToFit(800, 500);
             }
-            image.buffer = yield imageBuffer.getBufferAsync(Jimp_1.default.MIME_PNG);
+            image.buffer = yield imageBuffer.getBufferAsync(jimp_1.default.MIME_PNG);
         }))
             .catch(() => {
             return null;
