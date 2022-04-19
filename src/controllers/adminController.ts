@@ -29,7 +29,12 @@ export async function login_post(req: express.Request, res: express.Response) {
       process.env.JWT_SECRET as string,
       { expiresIn: '12h' }
     );
-    res.cookie('token', token, { httpOnly: true });
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 12 * 60 * 60,
+    });
     return res.status(200).json({
       message: 'Successfully logged in and attached token to http-only cookie.',
     });
