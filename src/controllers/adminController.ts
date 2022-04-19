@@ -33,7 +33,7 @@ export async function login_post(req: express.Request, res: express.Response) {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      maxAge: 12 * 60 * 60,
+      maxAge: 12 * 60 * 60 * 1000,
     });
     return res.status(200).json({
       message: 'Successfully logged in and attached token to http-only cookie.',

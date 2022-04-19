@@ -42,7 +42,10 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.use(
   cors({
-    origin: ['https://media-map-public-mw.herokuapp.com'],
+    origin: [
+      'https://media-map-public-mw.herokuapp.com',
+      // 'http://localhost:3000',
+    ],
   })
 );
 

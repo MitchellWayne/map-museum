@@ -35,7 +35,12 @@ function login_post(req, res) {
         const success = yield checkLogin(req.body.username, req.body.password);
         if (success) {
             const token = jsonwebtoken_1.default.sign({ userID: process.env.USER_ID }, process.env.JWT_SECRET, { expiresIn: '12h' });
-            res.cookie('token', token, { httpOnly: true });
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'strict',
+                maxAge: 12 * 60 * 60 * 1000,
+            });
             return res.status(200).json({
                 message: 'Successfully logged in and attached token to http-only cookie.',
             });
